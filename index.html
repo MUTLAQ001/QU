@@ -96,7 +96,6 @@
             max-width: 500px;
             display: flex;
             flex-direction: column;
-            gap: 15px; 
         }
 
         .dates-card {
@@ -105,19 +104,20 @@
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(15, 43, 72, 0.08); 
             text-align: center;
-            padding-bottom: 20px;
         }
 
-        .countdown-title { padding: 20px 20px 10px 20px; font-size: 20px; font-weight: 700; color: #000; line-height: 1.4; }
+        .countdown-title { padding: 20px 20px 15px 20px; font-size: 20px; font-weight: 700; color: #000; line-height: 1.4; }
         
         .timer-status {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 700;
+            margin-top: 20px;
             margin-bottom: 15px;
             display: block;
+            text-align: center;
         }
 
-        .dates-container { display: flex; flex-direction: row; margin-bottom: 15px;}
+        .dates-container { display: flex; flex-direction: row; }
         .date-box { flex: 1; padding: 20px 20px; display: flex; flex-direction: column; justify-content: center; }
         .date-box.gregorian { background-color: var(--light-blue); color: #000; }
         .date-box.hijri { background-color: var(--dark-blue); color: #000; }
@@ -247,6 +247,7 @@
         .past-event.exam-row { border-right: 5px solid #d0d8e0 !important; }
         
         .active-event {
+            /* جعل جميع الحواف متساوية السماكة */
             border: 2px solid var(--active-color) !important;
             background-color: #fff9f5 !important;
             box-shadow: 0 4px 20px rgba(230, 126, 34, 0.1) !important;
@@ -385,10 +386,12 @@
             .past-event.academic-row td:first-child,
             .past-event.exam-row td:first-child { border-top: 4px solid #d0d8e0; }
             
-            .active-event.holiday-row td:first-child,
-            .active-event.academic-row td:first-child,
-            .active-event.exam-row td:first-child,
             .active-event td:first-child { border-top: none !important; }
+            
+            .active-event {
+                border: 2px solid var(--active-color) !important;
+                /* تمت إزالة border-right السميك هنا لجعل الحواف متساوية */
+            }
         }
     </style>
 </head>
@@ -410,12 +413,13 @@
                         <div class="date-box gregorian"><span class="date-number" id="g-day">--</span><span class="date-text" id="g-text">--</span></div>
                         <div class="date-box hijri"><span class="date-number" id="h-day">--</span><span class="date-text" id="h-text">--</span></div>
                     </div>
-                    <span id="timer-status" class="timer-status">جاري الحساب...</span>
-                    <div class="timer-container" id="timer">
-                        <div class="timer-box"><span class="timer-label" id="days-label">يوم</span><span class="timer-num" id="days">00</span></div>
-                        <div class="timer-box"><span class="timer-label" id="hours-label">ساعة</span><span class="timer-num" id="hours">00</span></div>
-                        <div class="timer-box"><span class="timer-label" id="minutes-label">دقيقة</span><span class="timer-num" id="minutes">00</span></div>
-                    </div>
+                </div>
+                
+                <span id="timer-status" class="timer-status">جاري الحساب...</span>
+                <div class="timer-container" id="timer">
+                    <div class="timer-box"><span class="timer-label" id="days-label">يوم</span><span class="timer-num" id="days">00</span></div>
+                    <div class="timer-box"><span class="timer-label" id="hours-label">ساعة</span><span class="timer-num" id="hours">00</span></div>
+                    <div class="timer-box"><span class="timer-label" id="minutes-label">دقيقة</span><span class="timer-num" id="minutes">00</span></div>
                 </div>
             </div>
         </section>
