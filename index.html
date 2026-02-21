@@ -23,6 +23,7 @@
             --text-gray: #7f8c8d;
             --past-color: #a0aab5; 
             --past-bg: #f3f4f6;
+            --active-color: #e67e22;
         }
 
         body {
@@ -97,15 +98,24 @@
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(15, 43, 72, 0.08); 
             text-align: center;
+            padding-bottom: 20px;
         }
 
-        .countdown-title { padding: 20px; font-size: 22px; font-weight: 700; color: #000; }
-        .dates-container { display: flex; flex-direction: row; }
-        .date-box { flex: 1; padding: 25px 20px; display: flex; flex-direction: column; justify-content: center; }
+        .countdown-title { padding: 20px 20px 10px 20px; font-size: 20px; font-weight: 700; color: #000; line-height: 1.4; }
+        
+        .timer-status {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .dates-container { display: flex; flex-direction: row; margin-bottom: 15px;}
+        .date-box { flex: 1; padding: 20px 20px; display: flex; flex-direction: column; justify-content: center; }
         .date-box.gregorian { background-color: var(--light-blue); color: #000; }
         .date-box.hijri { background-color: var(--dark-blue); color: #000; }
-        .date-number { font-size: 48px; font-weight: 700; line-height: 1; margin-bottom: 5px; }
-        .date-text { font-size: 18px; font-weight: 600; }
+        .date-number { font-size: 42px; font-weight: 700; line-height: 1; margin-bottom: 5px; }
+        .date-text { font-size: 16px; font-weight: 600; }
 
         .timer-container { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
         .timer-box {
@@ -186,6 +196,7 @@
             text-align: right;
             border-left: 1px solid #f0f4f8;
             flex: 1;
+            line-height: 1.5;
         }
 
         td:last-child { border-left: none; }
@@ -219,6 +230,12 @@
         }
         .past-event.holiday-row { border-right: 5px solid #d0d8e0 !important; }
         
+        .active-event {
+            border: 2px solid var(--active-color) !important;
+            background-color: #fff9f5 !important;
+            box-shadow: 0 4px 20px rgba(230, 126, 34, 0.1) !important;
+        }
+        
         .ended-badge {
             background-color: var(--past-color);
             color: white;
@@ -231,11 +248,30 @@
             font-weight: 600;
         }
 
+        .active-badge {
+            background-color: var(--active-color);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-bottom: 8px;
+            display: inline-block;
+            align-self: flex-start;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(230, 126, 34, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(230, 126, 34, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(230, 126, 34, 0); }
+        }
+
         .past-hidden { display: none !important; }
 
         .toggle-row {
             display: block !important;
-            margin-top: 25px;
+            margin-bottom: 25px; 
             background: transparent !important;
             border: none !important;
             box-shadow: none !important;
@@ -327,6 +363,7 @@
             .holiday-row { border-right: none !important; }
             .holiday-row td:first-child { border-top: 4px solid var(--secondary-color); }
             .past-event.holiday-row td:first-child { border-top: 4px solid #d0d8e0; }
+            .active-event.holiday-row td:first-child { border-top: 4px solid var(--active-color); }
         }
     </style>
 </head>
@@ -348,11 +385,12 @@
                         <div class="date-box gregorian"><span class="date-number" id="g-day">--</span><span class="date-text" id="g-text">--</span></div>
                         <div class="date-box hijri"><span class="date-number" id="h-day">--</span><span class="date-text" id="h-text">--</span></div>
                     </div>
-                </div>
-                <div class="timer-container" id="timer">
-                    <div class="timer-box"><span class="timer-label" id="days-label">يوم</span><span class="timer-num" id="days">00</span></div>
-                    <div class="timer-box"><span class="timer-label" id="hours-label">ساعة</span><span class="timer-num" id="hours">00</span></div>
-                    <div class="timer-box"><span class="timer-label" id="minutes-label">دقيقة</span><span class="timer-num" id="minutes">00</span></div>
+                    <span id="timer-status" class="timer-status">جاري الحساب...</span>
+                    <div class="timer-container" id="timer">
+                        <div class="timer-box"><span class="timer-label" id="days-label">يوم</span><span class="timer-num" id="days">00</span></div>
+                        <div class="timer-box"><span class="timer-label" id="hours-label">ساعة</span><span class="timer-num" id="hours">00</span></div>
+                        <div class="timer-box"><span class="timer-label" id="minutes-label">دقيقة</span><span class="timer-num" id="minutes">00</span></div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -381,14 +419,25 @@
                         <tr data-date="2026-01-18">
                             <td data-label="الحدث الأكاديمي"><span>بداية الدراسة للفصل الدراسي الثاني (472)</span></td>
                             <td data-label="اليوم">الأحد</td>
-                            <td data-label="البداية"><div class="date-cell"><span class="hijri-date">1447/07/29هـ</span><span class="gregorian-date">2026/01/18م</span></div></td>
-                            <td data-label="النهاية">-</td>
+                            <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1447/07/29هـ</span><span class="gregorian-date">2026/01/18م</span></div></td>
                         </tr>
                         <tr data-date="2026-05-10">
-                            <td data-label="الحدث الأكاديمي"><span>الاعتذار عن الفصل الثاني بدون تقدير</span></td>
+                            <td data-label="الحدث الأكاديمي"><span>الاعتذار عن الفصل الدراسي الثاني (472) للنظام الفصلي بدون تقدير<br>الانسحاب من الجامعة للنظام الفصلي بدون تقدير</span></td>
                             <td data-label="اليوم">الأحد - الأحد</td>
                             <td data-label="البداية"><div class="date-cell"><span class="hijri-date">1447/08/20هـ</span><span class="gregorian-date">2026/02/08م</span></div></td>
                             <td data-label="النهاية"><div class="date-cell"><span class="hijri-date">1447/11/23هـ</span><span class="gregorian-date">2026/05/10م</span></div></td>
+                        </tr>
+                        <tr data-date="2026-05-17">
+                            <td data-label="الحدث الأكاديمي"><span>الاعتذار عن السنة الدراسية للنظام السنوي بدون تقدير<br>الانسحاب من الجامعة للنظام السنوي بدون تقدير</span></td>
+                            <td data-label="اليوم">الأحد - الأحد</td>
+                            <td data-label="البداية"><div class="date-cell"><span class="hijri-date">1447/03/15هـ</span><span class="gregorian-date">2025/09/07م</span></div></td>
+                            <td data-label="النهاية"><div class="date-cell"><span class="hijri-date">1447/11/30هـ</span><span class="gregorian-date">2026/05/17م</span></div></td>
+                        </tr>
+                        <tr data-date="2026-05-03">
+                            <td data-label="الحدث الأكاديمي"><span>الانسحاب من مقرر للنظام الفصلي بدون تقدير</span></td>
+                            <td data-label="اليوم">الأحد - الأحد</td>
+                            <td data-label="البداية"><div class="date-cell"><span class="hijri-date">1447/08/27هـ</span><span class="gregorian-date">2026/02/15م</span></div></td>
+                            <td data-label="النهاية"><div class="date-cell"><span class="hijri-date">1447/11/16هـ</span><span class="gregorian-date">2026/05/03م</span></div></td>
                         </tr>
                         <tr class="holiday-row" data-date="2026-02-22">
                             <td data-label="الحدث الأكاديمي"><span>إجازة يوم التأسيس</span></td>
@@ -396,17 +445,17 @@
                             <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1447/09/05هـ</span><span class="gregorian-date">2026/02/22م</span></div></td>
                         </tr>
                         <tr class="holiday-row" data-date="2026-03-05">
-                            <td data-label="الحدث الأكاديمي"><span>إجازة عيد الفطر المبارك</span></td>
+                            <td data-label="الحدث الأكاديمي"><span>إجازة عيد الفطر المبارك بنهاية دوام يوم الخميس</span></td>
                             <td data-label="اليوم">الخميس</td>
                             <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1447/09/16هـ</span><span class="gregorian-date">2026/03/05م</span></div></td>
                         </tr>
                         <tr data-date="2026-03-29">
-                            <td data-label="الحدث الأكاديمي"><span>استئناف الدراسة بعد إجازة عيد الفطر</span></td>
+                            <td data-label="الحدث الأكاديمي"><span>استئناف الدراسة بعد إجازة عيد الفطر المبارك</span></td>
                             <td data-label="اليوم">الأحد</td>
                             <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1447/10/10هـ</span><span class="gregorian-date">2026/03/29م</span></div></td>
                         </tr>
                         <tr class="holiday-row" data-date="2026-05-21">
-                            <td data-label="الحدث الأكاديمي"><span>إجازة عيد الأضحى</span></td>
+                            <td data-label="الحدث الأكاديمي"><span>إجازة عيد الأضحى بنهاية دوام يوم الخميس</span></td>
                             <td data-label="اليوم">الخميس</td>
                             <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1447/12/04هـ</span><span class="gregorian-date">2026/05/21م</span></div></td>
                         </tr>
@@ -416,15 +465,37 @@
                             <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1447/12/16هـ</span><span class="gregorian-date">2026/06/02م</span></div></td>
                         </tr>
                         <tr data-date="2026-06-18">
-                            <td data-label="الحدث الأكاديمي"><span>الاختبارات النهائية للفصل الدراسي الثاني</span></td>
+                            <td data-label="الحدث الأكاديمي"><span>الاختبارات النهائية للفصل الدراسي الثاني (472)</span></td>
                             <td data-label="اليوم">الأحد - الخميس</td>
                             <td data-label="البداية"><div class="date-cell"><span class="hijri-date">1447/12/21هـ</span><span class="gregorian-date">2026/06/07م</span></div></td>
                             <td data-label="النهاية"><div class="date-cell"><span class="hijri-date">1448/01/03هـ</span><span class="gregorian-date">2026/06/18م</span></div></td>
                         </tr>
+                        <tr data-date="2026-06-20">
+                            <td data-label="الحدث الأكاديمي"><span>آخر موعد لرصد الدرجات للفصل الدراسي الثاني (472)</span></td>
+                            <td data-label="اليوم">السبت</td>
+                            <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1448/01/05هـ</span><span class="gregorian-date">2026/06/20م</span></div></td>
+                        </tr>
+                        <tr data-date="2026-06-22">
+                            <td data-label="الحدث الأكاديمي"><span>حساب المعدل التراكمي للفصل الدراسي الثاني (472)</span></td>
+                            <td data-label="اليوم">الاثنين</td>
+                            <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1448/01/07هـ</span><span class="gregorian-date">2026/06/22م</span></div></td>
+                        </tr>
                         <tr class="holiday-row" data-date="2026-06-18">
-                            <td data-label="الحدث الأكاديمي"><span>إجازة نهاية العام الدراسي 1447هـ</span></td>
+                            <td data-label="الحدث الأكاديمي"><span>إجازة نهاية العام الدراسي 1447هـ بنهاية دوام يوم الخميس</span></td>
                             <td data-label="اليوم">الخميس</td>
                             <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1448/01/03هـ</span><span class="gregorian-date">2026/06/18م</span></div></td>
+                        </tr>
+                        <tr data-date="2026-08-06">
+                            <td data-label="الحدث الأكاديمي"><span>تغيير التخصص والمقر على الفصل الدراسي الأول (481)</span></td>
+                            <td data-label="اليوم">الأحد - الخميس</td>
+                            <td data-label="البداية"><div class="date-cell"><span class="hijri-date">1448/02/12هـ</span><span class="gregorian-date">2026/07/26م</span></div></td>
+                            <td data-label="النهاية"><div class="date-cell"><span class="hijri-date">1448/02/23هـ</span><span class="gregorian-date">2026/08/06م</span></div></td>
+                        </tr>
+                        <tr data-date="2026-08-11">
+                            <td data-label="الحدث الأكاديمي"><span>التحويل من خارج الجامعة إلى جامعة القصيم على الفصل الدراسي الأول (481)</span></td>
+                            <td data-label="اليوم">الاثنين - الثلاثاء</td>
+                            <td data-label="البداية"><div class="date-cell"><span class="hijri-date">1448/02/20هـ</span><span class="gregorian-date">2026/08/03م</span></div></td>
+                            <td data-label="النهاية"><div class="date-cell"><span class="hijri-date">1448/02/28هـ</span><span class="gregorian-date">2026/08/11م</span></div></td>
                         </tr>
                         <tr data-date="2026-08-23">
                             <td data-label="الحدث الأكاديمي"><span>بداية الدراسة للعام الدراسي 1448هـ</span></td>
@@ -501,15 +572,18 @@
             const today = new Date().getTime(); 
             const rows = document.querySelectorAll('.table-section tbody tr:not(.toggle-row)'); 
             let pastRows = [];
-            let nextEventFound = false;
+            let activeOrNextFound = false;
 
             rows.forEach(row => {
                 const dateString = row.getAttribute('data-date'); 
                 if (dateString) {
                     const eventEnd = new Date(dateString + "T23:59:59").getTime(); 
-                    const eventStart = new Date(dateString + "T00:00:00").getTime(); 
                     
-                    if (eventEnd < today) {
+                    const startText = row.querySelector('.gregorian-date').innerText.replace('م','').trim();
+                    const parts = startText.split('/');
+                    const eventStart = new Date(`${parts[0]}-${parts[1]}-${parts[2]}T00:00:00`).getTime();
+                    
+                    if (today > eventEnd) {
                         row.classList.add('past-event');
                         row.classList.add('past-hidden'); 
                         
@@ -522,6 +596,38 @@
                         }
                         
                         pastRows.push(row);
+                    } else if (today >= eventStart && today <= eventEnd) {
+                        row.classList.add('active-event');
+                        
+                        const titleCell = row.querySelector('td[data-label="الحدث الأكاديمي"]');
+                        if (titleCell && !titleCell.querySelector('.active-badge')) {
+                            const badge = document.createElement('span');
+                            badge.className = 'active-badge';
+                            badge.innerText = 'جاري الآن';
+                            titleCell.insertBefore(badge, titleCell.firstChild);
+                        }
+
+                        row.addEventListener('click', function() {
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                            startCountdown(
+                                row.querySelector('td[data-label="الحدث الأكاديمي"] span:not(.active-badge)').innerText.trim(),
+                                eventEnd,
+                                row.querySelectorAll('.gregorian-date')[row.querySelectorAll('.gregorian-date').length - 1].innerText,
+                                row.querySelectorAll('.hijri-date')[row.querySelectorAll('.hijri-date').length - 1].innerText,
+                                true
+                            );
+                        });
+
+                        if (!activeOrNextFound) {
+                            startCountdown(
+                                row.querySelector('td[data-label="الحدث الأكاديمي"] span:not(.active-badge)').innerText.trim(),
+                                eventEnd,
+                                row.querySelectorAll('.gregorian-date')[row.querySelectorAll('.gregorian-date').length - 1].innerText,
+                                row.querySelectorAll('.hijri-date')[row.querySelectorAll('.hijri-date').length - 1].innerText,
+                                true
+                            );
+                            activeOrNextFound = true;
+                        }
                     } else {
                         row.addEventListener('click', function() {
                             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -529,18 +635,20 @@
                                 row.querySelector('td[data-label="الحدث الأكاديمي"] span').innerText.trim(),
                                 eventStart,
                                 row.querySelector('.gregorian-date').innerText,
-                                row.querySelector('.hijri-date').innerText
+                                row.querySelector('.hijri-date').innerText,
+                                false
                             );
                         });
 
-                        if (!nextEventFound) {
+                        if (!activeOrNextFound) {
                             startCountdown(
                                 row.querySelector('td[data-label="الحدث الأكاديمي"] span').innerText.trim(),
                                 eventStart,
                                 row.querySelector('.gregorian-date').innerText,
-                                row.querySelector('.hijri-date').innerText
+                                row.querySelector('.hijri-date').innerText,
+                                false
                             );
-                            nextEventFound = true;
+                            activeOrNextFound = true;
                         }
                     }
                 }
@@ -557,8 +665,8 @@
                     </td>
                 `;
                 
-                const lastPastRow = pastRows[pastRows.length - 1];
-                lastPastRow.parentNode.insertBefore(toggleTr, lastPastRow.nextSibling);
+                const tbody = document.querySelector('.table-section tbody');
+                tbody.insertBefore(toggleTr, rows[0]);
 
                 document.getElementById('toggle-past-btn').addEventListener('click', function() {
                     const isHidden = pastRows[0].classList.contains('past-hidden');
@@ -578,7 +686,7 @@
             }
         }
 
-        function startCountdown(title, dateTarget, gDate, hDate) {
+        function startCountdown(title, dateTarget, gDate, hDate, isActive) {
             clearInterval(countdownInterval);
             
             const card = document.getElementById("card-content");
@@ -586,8 +694,17 @@
             void card.offsetWidth; 
             card.classList.add("fade-in");
 
-            document.getElementById("event-title").innerText = title;
+            document.getElementById("event-title").innerHTML = title;
             
+            const statusEl = document.getElementById("timer-status");
+            if(isActive) {
+                statusEl.innerText = "الوقت المتبقي لانتهاء الحدث:";
+                statusEl.style.color = "var(--active-color)";
+            } else {
+                statusEl.innerText = "الوقت المتبقي لبداية الحدث:";
+                statusEl.style.color = "var(--secondary-color)";
+            }
+
             const gParts = gDate.split('/');
             const months = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
             if(gParts.length === 3) {
