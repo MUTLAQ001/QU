@@ -24,6 +24,13 @@
             --past-color: #a0aab5; 
             --past-bg: #f3f4f6;
             --active-color: #e67e22;
+            
+            --holiday-color: #179c8e;
+            --holiday-text: #0e6f64;
+            --academic-color: #3498db;
+            --academic-text: #217dbb;
+            --exam-color: #e74c3c;
+            --exam-text: #c0392b;
         }
 
         body {
@@ -213,8 +220,14 @@
             opacity: 0.9;
         }
 
-        .holiday-row { border-right: 5px solid var(--secondary-color) !important; }
-        .holiday-row td { color: #0e6f64; }
+        .holiday-row { border-right: 5px solid var(--holiday-color) !important; }
+        .holiday-row td { color: var(--holiday-text); }
+        
+        .academic-row { border-right: 5px solid var(--academic-color) !important; }
+        .academic-row td { color: var(--academic-text); }
+        
+        .exam-row { border-right: 5px solid var(--exam-color) !important; }
+        .exam-row td { color: var(--exam-text); }
 
         .date-cell { display: inline-flex; gap: 10px; align-items: center; flex-wrap: wrap;}
         .hijri-date { font-weight: 700; color: var(--primary-color); direction: ltr; }
@@ -228,10 +241,14 @@
         .past-event td, .past-event .hijri-date, .past-event .gregorian-date { 
             color: var(--past-color) !important; 
         }
-        .past-event.holiday-row { border-right: 5px solid #d0d8e0 !important; }
+        
+        .past-event.holiday-row,
+        .past-event.academic-row,
+        .past-event.exam-row { border-right: 5px solid #d0d8e0 !important; }
         
         .active-event {
             border: 2px solid var(--active-color) !important;
+            border-right: 5px solid var(--active-color) !important;
             background-color: #fff9f5 !important;
             box-shadow: 0 4px 20px rgba(230, 126, 34, 0.1) !important;
         }
@@ -360,10 +377,18 @@
 
             td:last-child { border-bottom: none; }
             
-            .holiday-row { border-right: none !important; }
-            .holiday-row td:first-child { border-top: 4px solid var(--secondary-color); }
-            .past-event.holiday-row td:first-child { border-top: 4px solid #d0d8e0; }
-            .active-event.holiday-row td:first-child { border-top: 4px solid var(--active-color); }
+            .holiday-row, .academic-row, .exam-row { border-right: none !important; }
+            .holiday-row td:first-child { border-top: 4px solid var(--holiday-color); }
+            .academic-row td:first-child { border-top: 4px solid var(--academic-color); }
+            .exam-row td:first-child { border-top: 4px solid var(--exam-color); }
+            
+            .past-event.holiday-row td:first-child,
+            .past-event.academic-row td:first-child,
+            .past-event.exam-row td:first-child { border-top: 4px solid #d0d8e0; }
+            
+            .active-event.holiday-row td:first-child,
+            .active-event.academic-row td:first-child,
+            .active-event.exam-row td:first-child { border-top: 4px solid var(--active-color); }
         }
     </style>
 </head>
@@ -410,30 +435,30 @@
                     </thead>
                     <tbody>
                         
-                        <tr data-date="2026-01-18">
+                        <tr class="academic-row" data-date="2026-01-18">
                             <td data-label="الحدث الأكاديمي"><span>تأجيل الفصل الدراسي الثاني (472) للنظام الفصلي</span></td>
                             <td data-label="اليوم">السبت - الأحد</td>
                             <td data-label="البداية"><div class="date-cell"><span class="hijri-date">1447/07/21هـ</span><span class="gregorian-date">2026/01/10م</span></div></td>
                             <td data-label="النهاية"><div class="date-cell"><span class="hijri-date">1447/07/29هـ</span><span class="gregorian-date">2026/01/18م</span></div></td>
                         </tr>
-                        <tr data-date="2026-01-18">
+                        <tr class="academic-row" data-date="2026-01-18">
                             <td data-label="الحدث الأكاديمي"><span>بداية الدراسة للفصل الدراسي الثاني (472)</span></td>
                             <td data-label="اليوم">الأحد</td>
                             <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1447/07/29هـ</span><span class="gregorian-date">2026/01/18م</span></div></td>
                         </tr>
-                        <tr data-date="2026-05-10">
+                        <tr class="academic-row" data-date="2026-05-10">
                             <td data-label="الحدث الأكاديمي"><span>الاعتذار عن الفصل الدراسي الثاني (472) للنظام الفصلي بدون تقدير<br>الانسحاب من الجامعة للنظام الفصلي بدون تقدير</span></td>
                             <td data-label="اليوم">الأحد - الأحد</td>
                             <td data-label="البداية"><div class="date-cell"><span class="hijri-date">1447/08/20هـ</span><span class="gregorian-date">2026/02/08م</span></div></td>
                             <td data-label="النهاية"><div class="date-cell"><span class="hijri-date">1447/11/23هـ</span><span class="gregorian-date">2026/05/10م</span></div></td>
                         </tr>
-                        <tr data-date="2026-05-17">
+                        <tr class="academic-row" data-date="2026-05-17">
                             <td data-label="الحدث الأكاديمي"><span>الاعتذار عن السنة الدراسية للنظام السنوي بدون تقدير<br>الانسحاب من الجامعة للنظام السنوي بدون تقدير</span></td>
                             <td data-label="اليوم">الأحد - الأحد</td>
                             <td data-label="البداية"><div class="date-cell"><span class="hijri-date">1447/03/15هـ</span><span class="gregorian-date">2025/09/07م</span></div></td>
                             <td data-label="النهاية"><div class="date-cell"><span class="hijri-date">1447/11/30هـ</span><span class="gregorian-date">2026/05/17م</span></div></td>
                         </tr>
-                        <tr data-date="2026-05-03">
+                        <tr class="academic-row" data-date="2026-05-03">
                             <td data-label="الحدث الأكاديمي"><span>الانسحاب من مقرر للنظام الفصلي بدون تقدير</span></td>
                             <td data-label="اليوم">الأحد - الأحد</td>
                             <td data-label="البداية"><div class="date-cell"><span class="hijri-date">1447/08/27هـ</span><span class="gregorian-date">2026/02/15م</span></div></td>
@@ -464,18 +489,18 @@
                             <td data-label="اليوم">الثلاثاء</td>
                             <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1447/12/16هـ</span><span class="gregorian-date">2026/06/02م</span></div></td>
                         </tr>
-                        <tr data-date="2026-06-18">
+                        <tr class="exam-row" data-date="2026-06-18">
                             <td data-label="الحدث الأكاديمي"><span>الاختبارات النهائية للفصل الدراسي الثاني (472)</span></td>
                             <td data-label="اليوم">الأحد - الخميس</td>
                             <td data-label="البداية"><div class="date-cell"><span class="hijri-date">1447/12/21هـ</span><span class="gregorian-date">2026/06/07م</span></div></td>
                             <td data-label="النهاية"><div class="date-cell"><span class="hijri-date">1448/01/03هـ</span><span class="gregorian-date">2026/06/18م</span></div></td>
                         </tr>
-                        <tr data-date="2026-06-20">
+                        <tr class="exam-row" data-date="2026-06-20">
                             <td data-label="الحدث الأكاديمي"><span>آخر موعد لرصد الدرجات للفصل الدراسي الثاني (472)</span></td>
                             <td data-label="اليوم">السبت</td>
                             <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1448/01/05هـ</span><span class="gregorian-date">2026/06/20م</span></div></td>
                         </tr>
-                        <tr data-date="2026-06-22">
+                        <tr class="exam-row" data-date="2026-06-22">
                             <td data-label="الحدث الأكاديمي"><span>حساب المعدل التراكمي للفصل الدراسي الثاني (472)</span></td>
                             <td data-label="اليوم">الاثنين</td>
                             <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1448/01/07هـ</span><span class="gregorian-date">2026/06/22م</span></div></td>
@@ -485,19 +510,19 @@
                             <td data-label="اليوم">الخميس</td>
                             <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1448/01/03هـ</span><span class="gregorian-date">2026/06/18م</span></div></td>
                         </tr>
-                        <tr data-date="2026-08-06">
+                        <tr class="academic-row" data-date="2026-08-06">
                             <td data-label="الحدث الأكاديمي"><span>تغيير التخصص والمقر على الفصل الدراسي الأول (481)</span></td>
                             <td data-label="اليوم">الأحد - الخميس</td>
                             <td data-label="البداية"><div class="date-cell"><span class="hijri-date">1448/02/12هـ</span><span class="gregorian-date">2026/07/26م</span></div></td>
                             <td data-label="النهاية"><div class="date-cell"><span class="hijri-date">1448/02/23هـ</span><span class="gregorian-date">2026/08/06م</span></div></td>
                         </tr>
-                        <tr data-date="2026-08-11">
+                        <tr class="academic-row" data-date="2026-08-11">
                             <td data-label="الحدث الأكاديمي"><span>التحويل من خارج الجامعة إلى جامعة القصيم على الفصل الدراسي الأول (481)</span></td>
                             <td data-label="اليوم">الاثنين - الثلاثاء</td>
                             <td data-label="البداية"><div class="date-cell"><span class="hijri-date">1448/02/20هـ</span><span class="gregorian-date">2026/08/03م</span></div></td>
                             <td data-label="النهاية"><div class="date-cell"><span class="hijri-date">1448/02/28هـ</span><span class="gregorian-date">2026/08/11م</span></div></td>
                         </tr>
-                        <tr data-date="2026-08-23">
+                        <tr class="academic-row" data-date="2026-08-23">
                             <td data-label="الحدث الأكاديمي"><span>بداية الدراسة للعام الدراسي 1448هـ</span></td>
                             <td data-label="اليوم">الأحد</td>
                             <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1448/03/10هـ</span><span class="gregorian-date">2026/08/23م</span></div></td>
