@@ -3,10 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>التقويم الأكاديمي</title>
+    <title>التقويم الأكاديمي التفاعلي</title>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+        }
+
         :root {
             --primary-color: #0f2b48; 
             --secondary-color: #179c8e; 
@@ -16,6 +22,7 @@
             --text-dark: #2c3e50;
             --text-gray: #7f8c8d;
             --past-color: #a0aab5; 
+            --past-bg: #f3f4f6;
         }
 
         body {
@@ -23,13 +30,18 @@
             background-color: var(--page-bg);
             margin: 0;
             padding: 0;
+            padding-bottom: 100px;
             color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 1100px;
-            margin: 0 auto 50px auto;
+            max-width: 950px;
+            margin: 0 auto 30px auto;
             padding: 0 20px;
+            flex: 1;
         }
 
         .page-header {
@@ -95,7 +107,7 @@
         .date-number { font-size: 48px; font-weight: 700; line-height: 1; margin-bottom: 5px; }
         .date-text { font-size: 18px; font-weight: 600; }
 
-        .timer-container { display: flex; justify-content: center; gap: 15px; }
+        .timer-container { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
         .timer-box {
             border: 2px solid var(--dark-blue); 
             border-radius: 6px;
@@ -114,136 +126,207 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
         .table-section {
-            background-color: white;
-            border-radius: 24px;
-            padding: 35px;
-            box-shadow: 0 20px 40px rgba(15, 43, 72, 0.05); 
-            border: 1px solid rgba(0,0,0,0.02);
+            padding: 10px 0;
         }
 
         .table-title {
             color: var(--primary-color); 
             text-align: center; 
-            margin-bottom: 35px; 
+            margin-bottom: 30px; 
             font-size: 24px; 
             font-weight: 700; 
             position: relative;
-            background: transparent;
         }
         .table-title::after {
             content: ''; 
             display: block; 
-            width: 60px; 
+            width: 80px; 
             height: 4px; 
             background-color: var(--secondary-color); 
-            margin: 15px auto 0; 
+            margin: 15px auto 0 auto; 
             border-radius: 4px;
         }
 
-        .table-container { width: 100%; border-radius: 12px; }
-        
-        table { width: 100%; border-collapse: collapse; text-align: right; background-color: #fff; }
-        th, td { padding: 18px 20px; border-bottom: 1px solid #f0f4f8; }
-        th { background-color: #f8fafc; color: var(--primary-color); font-weight: 700; font-size: 15px; }
-        td { font-size: 15px; font-weight: 600; color: var(--text-dark); transition: all 0.2s ease; }
+        .table-container { width: 100%; }
+        table, thead, tbody, th, td, tr { display: block; width: 100%; }
+        thead { display: none; }
+        table { background: transparent; border-collapse: collapse; }
 
-        tbody tr:last-child td { border-bottom: none; }
-        tbody tr:not(.past-event):not(.toggle-row):hover { background-color: #fcfdfd; transform: scale(1.001); }
-
-        .holiday-row { background-color: #eef8f7 !important; position: relative; }
-        .holiday-row td { color: #0e6f64; font-weight: 700; border-bottom: 1px solid #dcf0ed; }
-        .holiday-row td:first-child { border-right: 4px solid var(--secondary-color); }
-
-        .date-cell { direction: ltr; display: inline-block; text-align: center; }
-        .hijri-date { display: block; color: var(--primary-color); font-weight: 700; transition: color 0.3s ease; }
-        .gregorian-date { display: block; font-size: 13px; color: var(--text-gray); margin-top: 4px; font-weight: 600; transition: color 0.3s ease; }
-
-        .past-event { background-color: #fafafa !important; opacity: 0.6; }
-        .past-event td, .past-event .hijri-date, .past-event .gregorian-date { color: var(--past-color) !important; text-decoration: line-through; }
-        .past-event.holiday-row td:first-child { border-right: 4px solid #d0d8e0; }
-
-        @media (min-width: 769px) {
-            .toggle-row { display: none !important; }
-            .past-hidden { display: table-row !important; }
+        tr:not(.toggle-row) { 
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            margin-bottom: 18px; 
+            border: 1px solid #e1e8ef; 
+            border-radius: 16px; 
+            background-color: #fff; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer; 
+            position: relative;
         }
 
+        tr:not(.toggle-row):hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            border-color: #c9d6e4;
+        }
+
+        tr:not(.toggle-row):active {
+            transform: scale(0.99);
+        }
+
+        td {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+            text-align: right;
+            border-left: 1px solid #f0f4f8;
+            flex: 1;
+        }
+
+        td:last-child { border-left: none; }
+        
+        td:first-child { flex: 2; }
+        td[colspan="2"] { flex: 2; }
+
+        td::before {
+            content: attr(data-label);
+            font-size: 13px;
+            color: var(--secondary-color);
+            font-weight: 700;
+            margin-bottom: 8px;
+            opacity: 0.9;
+        }
+
+        .holiday-row { border-right: 5px solid var(--secondary-color) !important; }
+        .holiday-row td { color: #0e6f64; }
+
+        .date-cell { display: inline-flex; gap: 10px; align-items: center; flex-wrap: wrap;}
+        .hijri-date { font-weight: 700; color: var(--primary-color); direction: ltr; }
+        .gregorian-date { border-right: 1px solid #ddd; padding-right: 10px; color: var(--text-gray); direction: ltr;}
+
+        .past-event { 
+            background-color: var(--past-bg) !important; 
+            border-color: #e0e0e0 !important;
+        }
+        .past-event td { border-left-color: #e8e8e8; }
+        .past-event td, .past-event .hijri-date, .past-event .gregorian-date { 
+            color: var(--past-color) !important; 
+        }
+        .past-event.holiday-row { border-right: 5px solid #d0d8e0 !important; }
+        
+        .ended-badge {
+            background-color: var(--past-color);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-bottom: 8px;
+            display: inline-block;
+            align-self: flex-start;
+            font-weight: 600;
+        }
+
+        .past-hidden { display: none !important; }
+
+        .toggle-row {
+            display: block !important;
+            margin-top: 25px;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            cursor: default !important;
+        }
+        .toggle-row td { padding: 0 !important; border: none !important; background: transparent !important; }
+        .toggle-row td::before { display: none !important; }
+
+        .past-toggle-btn {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 18px;
+            border-radius: 16px;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(15, 43, 72, 0.15);
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .past-toggle-btn:hover { background-color: #1a426b; transform: translateY(-2px); }
+
+        .page-footer {
+            background-color: white;
+            padding: 20px 0;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .footer-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 14px;
+            background-color: var(--page-bg);
+            padding: 10px 20px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .footer-link:hover {
+            background-color: var(--light-blue);
+            transform: translateY(-3px);
+        }
+
+        .icon-bg { color: var(--secondary-color); font-size: 18px; }
+
         @media (max-width: 768px) {
-            .table-section { padding: 20px 10px; background-color: transparent; box-shadow: none; border: none; }
-            .table-title { font-size: 22px; margin-bottom: 30px; }
-            
-            table, tbody { background-color: transparent !important; }
-
-            table, thead, tbody, th, td, tr { display: block; }
-            thead tr { display: none; }
-            
-            tr:not(.toggle-row) { 
-                margin-bottom: 20px; 
-                border: 1px solid #e1e8ef; 
-                border-radius: 16px; 
-                background-color: #fff; 
-                box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-                overflow: hidden;
-            }
-
-            td {
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
-                padding: 15px;
-                text-align: right;
-                border-bottom: 1px solid #f0f4f8;
-            }
-
-            td:last-child { border-bottom: none; }
-
-            td::before {
-                content: attr(data-label);
-                font-size: 12px;
-                color: var(--secondary-color);
-                font-weight: 700;
-                margin-bottom: 8px;
-            }
-
-            .past-hidden { display: none !important; }
-
-            .toggle-row {
-                display: block !important;
-                margin-bottom: 25px;
-                background: transparent !important;
-                border: none !important;
-                box-shadow: none !important;
-            }
-            .toggle-row td { padding: 0 !important; border: none !important; }
-            .toggle-row td::before { display: none !important; content: none !important; }
-
-            .past-toggle-btn {
-                width: 100%;
-                background-color: #fff;
-                color: var(--dark-blue);
-                border: 2px dashed #d1d9e0;
-                padding: 16px;
-                border-radius: 16px;
-                font-family: inherit;
-                font-size: 15px;
-                font-weight: 700;
-                cursor: pointer;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-                transition: all 0.3s;
-            }
-            .past-toggle-btn:hover, .past-toggle-btn:active { background-color: #f8fafc; border-color: var(--dark-blue); }
-
-            .date-cell { text-align: right; direction: rtl; display: flex; gap: 10px; align-items: center; }
-            .hijri-date { display: inline; }
-            .gregorian-date { display: inline; margin-top: 0; border-right: 1px solid #ddd; padding-right: 10px; }
-
-            .holiday-row td:first-child { border-right: none; border-top: 4px solid var(--secondary-color); }
-            .past-event.holiday-row td:first-child { border-top: 4px solid #d0d8e0; }
-
-            .dates-container { flex-direction: row; }
             .date-box { padding: 15px 10px; } 
             .date-number { font-size: 38px; } 
             .date-text { font-size: 15px; }
-            .timer-container { gap: 10px; flex-wrap: wrap; }
+            .page-footer { padding: 15px 10px; gap: 10px; }
+            .footer-link { padding: 8px 15px; font-size: 13px; }
+
+            tr:not(.toggle-row) { 
+                flex-direction: column;
+                align-items: stretch;
+                padding: 0;
+            }
+
+            td {
+                border-left: none;
+                border-bottom: 1px solid #f0f4f8;
+                padding: 15px 20px;
+                flex: none !important;
+            }
+
+            td:last-child { border-bottom: none; }
+            
+            .holiday-row { border-right: none !important; }
+            .holiday-row td:first-child { border-top: 4px solid var(--secondary-color); }
+            .past-event.holiday-row td:first-child { border-top: 4px solid #d0d8e0; }
         }
     </style>
 </head>
@@ -283,70 +366,70 @@
                         <tr>
                             <th>الحدث الأكاديمي</th>
                             <th>اليوم</th>
-                            <th style="text-align: center;">البداية</th>
-                            <th style="text-align: center;">النهاية</th>
+                            <th>البداية</th>
+                            <th>النهاية</th>
                         </tr>
                     </thead>
                     <tbody>
                         
                         <tr data-date="2026-01-18">
-                            <td data-label="الحدث الأكاديمي">تأجيل الفصل الدراسي الثاني (472) للنظام الفصلي</td>
+                            <td data-label="الحدث الأكاديمي"><span>تأجيل الفصل الدراسي الثاني (472) للنظام الفصلي</span></td>
                             <td data-label="اليوم">السبت - الأحد</td>
-                            <td data-label="البداية" style="text-align: center;"><div class="date-cell"><span class="hijri-date">1447/07/21هـ</span><span class="gregorian-date">2026/01/10م</span></div></td>
-                            <td data-label="النهاية" style="text-align: center;"><div class="date-cell"><span class="hijri-date">1447/07/29هـ</span><span class="gregorian-date">2026/01/18م</span></div></td>
+                            <td data-label="البداية"><div class="date-cell"><span class="hijri-date">1447/07/21هـ</span><span class="gregorian-date">2026/01/10م</span></div></td>
+                            <td data-label="النهاية"><div class="date-cell"><span class="hijri-date">1447/07/29هـ</span><span class="gregorian-date">2026/01/18م</span></div></td>
                         </tr>
                         <tr data-date="2026-01-18">
-                            <td data-label="الحدث الأكاديمي">بداية الدراسة للفصل الدراسي الثاني (472)</td>
+                            <td data-label="الحدث الأكاديمي"><span>بداية الدراسة للفصل الدراسي الثاني (472)</span></td>
                             <td data-label="اليوم">الأحد</td>
-                            <td data-label="البداية" style="text-align: center;"><div class="date-cell"><span class="hijri-date">1447/07/29هـ</span><span class="gregorian-date">2026/01/18م</span></div></td>
-                            <td data-label="النهاية" style="text-align: center;">-</td>
+                            <td data-label="البداية"><div class="date-cell"><span class="hijri-date">1447/07/29هـ</span><span class="gregorian-date">2026/01/18م</span></div></td>
+                            <td data-label="النهاية">-</td>
                         </tr>
                         <tr data-date="2026-05-10">
-                            <td data-label="الحدث الأكاديمي">الاعتذار عن الفصل الثاني بدون تقدير</td>
+                            <td data-label="الحدث الأكاديمي"><span>الاعتذار عن الفصل الثاني بدون تقدير</span></td>
                             <td data-label="اليوم">الأحد - الأحد</td>
-                            <td data-label="البداية" style="text-align: center;"><div class="date-cell"><span class="hijri-date">1447/08/20هـ</span><span class="gregorian-date">2026/02/08م</span></div></td>
-                            <td data-label="النهاية" style="text-align: center;"><div class="date-cell"><span class="hijri-date">1447/11/23هـ</span><span class="gregorian-date">2026/05/10م</span></div></td>
+                            <td data-label="البداية"><div class="date-cell"><span class="hijri-date">1447/08/20هـ</span><span class="gregorian-date">2026/02/08م</span></div></td>
+                            <td data-label="النهاية"><div class="date-cell"><span class="hijri-date">1447/11/23هـ</span><span class="gregorian-date">2026/05/10م</span></div></td>
                         </tr>
                         <tr class="holiday-row" data-date="2026-02-22">
-                            <td data-label="الحدث الأكاديمي">إجازة يوم التأسيس</td>
+                            <td data-label="الحدث الأكاديمي"><span>إجازة يوم التأسيس</span></td>
                             <td data-label="اليوم">الأحد</td>
-                            <td data-label="التاريخ" colspan="2" style="text-align: center;"><div class="date-cell"><span class="hijri-date">1447/09/05هـ</span><span class="gregorian-date">2026/02/22م</span></div></td>
+                            <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1447/09/05هـ</span><span class="gregorian-date">2026/02/22م</span></div></td>
                         </tr>
-                        <tr data-date="2026-03-05">
-                            <td data-label="الحدث الأكاديمي">إجازة عيد الفطر المبارك</td>
+                        <tr class="holiday-row" data-date="2026-03-05">
+                            <td data-label="الحدث الأكاديمي"><span>إجازة عيد الفطر المبارك</span></td>
                             <td data-label="اليوم">الخميس</td>
-                            <td data-label="التاريخ" colspan="2" style="text-align: center;"><div class="date-cell"><span class="hijri-date">1447/09/16هـ</span><span class="gregorian-date">2026/03/05م</span></div></td>
+                            <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1447/09/16هـ</span><span class="gregorian-date">2026/03/05م</span></div></td>
                         </tr>
                         <tr data-date="2026-03-29">
-                            <td data-label="الحدث الأكاديمي">استئناف الدراسة بعد إجازة عيد الفطر</td>
+                            <td data-label="الحدث الأكاديمي"><span>استئناف الدراسة بعد إجازة عيد الفطر</span></td>
                             <td data-label="اليوم">الأحد</td>
-                            <td data-label="التاريخ" colspan="2" style="text-align: center;"><div class="date-cell"><span class="hijri-date">1447/10/10هـ</span><span class="gregorian-date">2026/03/29م</span></div></td>
+                            <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1447/10/10هـ</span><span class="gregorian-date">2026/03/29م</span></div></td>
                         </tr>
-                        <tr data-date="2026-05-21">
-                            <td data-label="الحدث الأكاديمي">إجازة عيد الأضحى</td>
+                        <tr class="holiday-row" data-date="2026-05-21">
+                            <td data-label="الحدث الأكاديمي"><span>إجازة عيد الأضحى</span></td>
                             <td data-label="اليوم">الخميس</td>
-                            <td data-label="التاريخ" colspan="2" style="text-align: center;"><div class="date-cell"><span class="hijri-date">1447/12/04هـ</span><span class="gregorian-date">2026/05/21م</span></div></td>
+                            <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1447/12/04هـ</span><span class="gregorian-date">2026/05/21م</span></div></td>
                         </tr>
                         <tr data-date="2026-06-02">
-                            <td data-label="الحدث الأكاديمي">استئناف الدراسة بعد إجازة عيد الأضحى</td>
+                            <td data-label="الحدث الأكاديمي"><span>استئناف الدراسة بعد إجازة عيد الأضحى</span></td>
                             <td data-label="اليوم">الثلاثاء</td>
-                            <td data-label="التاريخ" colspan="2" style="text-align: center;"><div class="date-cell"><span class="hijri-date">1447/12/16هـ</span><span class="gregorian-date">2026/06/02م</span></div></td>
+                            <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1447/12/16هـ</span><span class="gregorian-date">2026/06/02م</span></div></td>
                         </tr>
                         <tr data-date="2026-06-18">
-                            <td data-label="الحدث الأكاديمي">الاختبارات النهائية للفصل الدراسي الثاني</td>
+                            <td data-label="الحدث الأكاديمي"><span>الاختبارات النهائية للفصل الدراسي الثاني</span></td>
                             <td data-label="اليوم">الأحد - الخميس</td>
-                            <td data-label="البداية" style="text-align: center;"><div class="date-cell"><span class="hijri-date">1447/12/21هـ</span><span class="gregorian-date">2026/06/07م</span></div></td>
-                            <td data-label="النهاية" style="text-align: center;"><div class="date-cell"><span class="hijri-date">1448/01/03هـ</span><span class="gregorian-date">2026/06/18م</span></div></td>
+                            <td data-label="البداية"><div class="date-cell"><span class="hijri-date">1447/12/21هـ</span><span class="gregorian-date">2026/06/07م</span></div></td>
+                            <td data-label="النهاية"><div class="date-cell"><span class="hijri-date">1448/01/03هـ</span><span class="gregorian-date">2026/06/18م</span></div></td>
                         </tr>
                         <tr class="holiday-row" data-date="2026-06-18">
-                            <td data-label="الحدث الأكاديمي">إجازة نهاية العام الدراسي 1447هـ</td>
+                            <td data-label="الحدث الأكاديمي"><span>إجازة نهاية العام الدراسي 1447هـ</span></td>
                             <td data-label="اليوم">الخميس</td>
-                            <td data-label="التاريخ" colspan="2" style="text-align: center;"><div class="date-cell"><span class="hijri-date">1448/01/03هـ</span><span class="gregorian-date">2026/06/18م</span></div></td>
+                            <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1448/01/03هـ</span><span class="gregorian-date">2026/06/18م</span></div></td>
                         </tr>
                         <tr data-date="2026-08-23">
-                            <td data-label="الحدث الأكاديمي">بداية الدراسة للعام الدراسي 1448هـ</td>
+                            <td data-label="الحدث الأكاديمي"><span>بداية الدراسة للعام الدراسي 1448هـ</span></td>
                             <td data-label="اليوم">الأحد</td>
-                            <td data-label="التاريخ" colspan="2" style="text-align: center;"><div class="date-cell"><span class="hijri-date">1448/03/10هـ</span><span class="gregorian-date">2026/08/23م</span></div></td>
+                            <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1448/03/10هـ</span><span class="gregorian-date">2026/08/23م</span></div></td>
                         </tr>
                     </tbody>
                 </table>
@@ -355,7 +438,21 @@
 
     </div>
 
+    <footer class="page-footer">
+        <a href="https://t.me/Qassim_U" class="footer-link" target="_blank" rel="noopener noreferrer">
+            <span class="icon-bg"><i class="fas fa-users"></i></span>
+            <span>Qassim_U</span>
+        </a>
+        <a href="https://t.me/Qassim_QU" class="footer-link" target="_blank" rel="noopener noreferrer">
+            <span>Qassim_QU</span>
+            <span class="icon-bg"><i class="fas fa-bullhorn"></i></span>
+        </a>
+    </footer>
+
     <script>
+        let countdownTarget = null;
+        let countdownInterval = null;
+
         function getArabicPlural(value, type) {
             let mod100 = value % 100;
             if (type === 'day') {
@@ -380,7 +477,6 @@
             const startDate = new Date("2026-01-18T00:00:00").getTime();
             const endDate = new Date("2026-06-18T23:59:59").getTime();
             const now = new Date().getTime();
-
             const displayElement = document.getElementById("current-week-display");
 
             if (now < startDate) {
@@ -401,19 +497,51 @@
             }
         }
 
-        function handlePastEvents() {
+        function initEventsAndClicks() {
             const today = new Date().getTime(); 
             const rows = document.querySelectorAll('.table-section tbody tr:not(.toggle-row)'); 
             let pastRows = [];
+            let nextEventFound = false;
 
             rows.forEach(row => {
                 const dateString = row.getAttribute('data-date'); 
                 if (dateString) {
-                    const eventDate = new Date(dateString + "T23:59:59").getTime(); 
-                    if (eventDate < today) {
+                    const eventEnd = new Date(dateString + "T23:59:59").getTime(); 
+                    const eventStart = new Date(dateString + "T00:00:00").getTime(); 
+                    
+                    if (eventEnd < today) {
                         row.classList.add('past-event');
                         row.classList.add('past-hidden'); 
+                        
+                        const titleCell = row.querySelector('td[data-label="الحدث الأكاديمي"]');
+                        if (titleCell && !titleCell.querySelector('.ended-badge')) {
+                            const badge = document.createElement('span');
+                            badge.className = 'ended-badge';
+                            badge.innerText = 'انتهى';
+                            titleCell.insertBefore(badge, titleCell.firstChild);
+                        }
+                        
                         pastRows.push(row);
+                    } else {
+                        row.addEventListener('click', function() {
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                            startCountdown(
+                                row.querySelector('td[data-label="الحدث الأكاديمي"] span').innerText.trim(),
+                                eventStart,
+                                row.querySelector('.gregorian-date').innerText,
+                                row.querySelector('.hijri-date').innerText
+                            );
+                        });
+
+                        if (!nextEventFound) {
+                            startCountdown(
+                                row.querySelector('td[data-label="الحدث الأكاديمي"] span').innerText.trim(),
+                                eventStart,
+                                row.querySelector('.gregorian-date').innerText,
+                                row.querySelector('.hijri-date').innerText
+                            );
+                            nextEventFound = true;
+                        }
                     }
                 }
             });
@@ -424,7 +552,7 @@
                 toggleTr.innerHTML = `
                     <td colspan="4">
                         <button id="toggle-past-btn" class="past-toggle-btn">
-                            عرض الأحداث المنتهية (${pastRows.length}) ▼
+                            عرض الأحداث المنتهية (${pastRows.length}) <i class="fas fa-chevron-down"></i>
                         </button>
                     </td>
                 `;
@@ -444,80 +572,51 @@
                     });
                     
                     this.innerHTML = isHidden 
-                        ? `إخفاء الأحداث المنتهية ▲` 
-                        : `عرض الأحداث المنتهية (${pastRows.length}) ▼`;
+                        ? `إخفاء الأحداث المنتهية <i class="fas fa-chevron-up"></i>` 
+                        : `عرض الأحداث المنتهية (${pastRows.length}) <i class="fas fa-chevron-down"></i>`;
                 });
             }
         }
 
-        calculateCurrentWeek();
-        handlePastEvents(); 
-
-        const events = [
-            {
-                title: "بداية الفصل الدراسي الأول",
-                date: new Date("August 24, 2025 00:00:00").getTime(),
-                gDay: "24", gText: "أغسطس 2025",
-                hDay: "01", hText: "ربيع الأول 1447"
-            },
-            {
-                title: "بداية الفصل الدراسي الثاني",
-                date: new Date("January 18, 2026 00:00:00").getTime(),
-                gDay: "18", gText: "يناير 2026",
-                hDay: "29", hText: "رجب 1447"
-            },
-            {
-                title: "إجازة يوم التأسيس",
-                date: new Date("February 22, 2026 00:00:00").getTime(),
-                gDay: "22", gText: "فبراير 2026",
-                hDay: "05", hText: "رمضان 1447" 
-            }
-        ];
-
-        let timerInterval;
-
-        function getNextEvent() {
-            const now = new Date().getTime();
-            for (let i = 0; i < events.length; i++) {
-                if (events[i].date > now) return events[i]; 
-            }
-            return null; 
-        }
-
-        function updateCardUI(event) {
+        function startCountdown(title, dateTarget, gDate, hDate) {
+            clearInterval(countdownInterval);
+            
             const card = document.getElementById("card-content");
             card.classList.remove("fade-in");
             void card.offsetWidth; 
             card.classList.add("fade-in");
 
-            document.getElementById("event-title").innerText = event.title;
-            document.getElementById("g-day").innerText = event.gDay;
-            document.getElementById("g-text").innerText = event.gText;
-            document.getElementById("h-day").innerText = event.hDay;
-            document.getElementById("h-text").innerText = event.hText;
-        }
-
-        function startDynamicTimer() {
-            const currentEvent = getNextEvent();
-
-            if (!currentEvent) {
-                document.getElementById("event-title").innerText = "انتهى التقويم";
-                document.getElementById("timer").innerHTML = "<div style='padding:10px; font-weight:bold;'>لا توجد أحداث قادمة</div>";
-                return;
+            document.getElementById("event-title").innerText = title;
+            
+            const gParts = gDate.split('/');
+            const months = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+            if(gParts.length === 3) {
+                 document.getElementById("g-day").innerText = gParts[2].replace('م','');
+                 document.getElementById("g-text").innerText = months[parseInt(gParts[1])-1] + ' ' + gParts[0];
+            } else {
+                document.getElementById("g-day").innerText = "--";
+                document.getElementById("g-text").innerText = gDate;
             }
 
-            updateCardUI(currentEvent);
-            clearInterval(timerInterval);
+            const hParts = hDate.split('/');
+            const hMonths = ["محرم", "صفر", "ربيع الأول", "ربيع الثاني", "جمادى الأول", "جمادى الآخرة", "رجب", "شعبان", "رمضان", "شوال", "ذو القعدة", "ذو الحجة"];
+            if(hParts.length === 3) {
+                 document.getElementById("h-day").innerText = hParts[2].replace('هـ','');
+                 document.getElementById("h-text").innerText = hMonths[parseInt(hParts[1])-1] + ' ' + hParts[0];
+            } else {
+                document.getElementById("h-day").innerText = "--";
+                document.getElementById("h-text").innerText = hDate;
+            }
 
-            timerInterval = setInterval(function() {
+            countdownInterval = setInterval(function() {
                 const now = new Date().getTime();
-                const distance = currentEvent.date - now;
+                const distance = dateTarget - now;
 
                 if (distance <= 0) {
-                    clearInterval(timerInterval); 
-                    startDynamicTimer(); 
-                    handlePastEvents(); 
-                    calculateCurrentWeek();
+                    clearInterval(countdownInterval);
+                    document.getElementById("days").innerHTML = "00";
+                    document.getElementById("hours").innerHTML = "00";
+                    document.getElementById("minutes").innerHTML = "00";
                     return;
                 }
 
@@ -536,7 +635,8 @@
             }, 1000);
         }
 
-        startDynamicTimer();
+        calculateCurrentWeek();
+        initEventsAndClicks();
     </script>
 </body>
 </html>
