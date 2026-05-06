@@ -149,20 +149,158 @@
         .table-title {
             color: var(--primary-color); 
             text-align: center; 
-            margin-bottom: 30px; 
+            margin-bottom: 15px; 
             font-size: 24px; 
             font-weight: 700; 
-            position: relative;
         }
-        .table-title::after {
-            content: ''; 
-            display: block; 
+
+        .title-divider {
             width: 80px; 
             height: 4px; 
             background-color: var(--secondary-color); 
-            margin: 15px auto 0 auto; 
+            margin: 0 auto 30px auto; 
             border-radius: 4px;
         }
+
+        .filter-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 35px;
+            position: relative;
+            z-index: 100;
+        }
+
+        .custom-dropdown {
+            position: relative;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .dropdown-toggle {
+            width: 100%;
+            background-color: white;
+            border: 2px solid #e1e8ef;
+            color: var(--primary-color);
+            padding: 14px 25px;
+            border-radius: 50px;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(15, 43, 72, 0.04);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .toggle-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .filter-icon {
+            color: var(--text-gray);
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        .dropdown-toggle:hover {
+            border-color: #c9d6e4;
+            box-shadow: 0 10px 25px rgba(23, 156, 142, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .custom-dropdown.active .dropdown-toggle {
+            border-color: var(--secondary-color);
+            box-shadow: 0 10px 25px rgba(23, 156, 142, 0.15);
+            background-color: rgba(23, 156, 142, 0.02);
+        }
+
+        .custom-dropdown.active .filter-icon {
+            color: var(--secondary-color);
+        }
+
+        .chevron-icon {
+            color: var(--text-gray);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 14px;
+        }
+
+        .custom-dropdown.active .chevron-icon {
+            transform: rotate(180deg);
+            color: var(--secondary-color);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            right: 0;
+            background-color: white;
+            border-radius: 24px;
+            border: 1px solid #e1e8ef;
+            box-shadow: 0 15px 40px rgba(15, 43, 72, 0.12);
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-15px) scale(0.98);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            padding: 10px;
+        }
+
+        .custom-dropdown.active .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .dropdown-item {
+            padding: 14px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-gray);
+            border-radius: 16px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 4px;
+        }
+
+        .dropdown-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--page-bg);
+            color: var(--primary-color);
+            transform: translateX(-4px);
+        }
+
+        .dropdown-item.selected {
+            background-color: rgba(23, 156, 142, 0.08);
+            color: var(--secondary-color);
+            font-weight: 700;
+        }
+
+        .dropdown-item.selected:hover {
+            transform: none;
+        }
+
+        .item-icon {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
+        }
+        
+        .icon-all { background-color: var(--secondary-color); box-shadow: 0 0 0 3px rgba(23, 156, 142, 0.15); }
+        .icon-academic { background-color: var(--academic-color); box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15); }
+        .icon-exam { background-color: var(--exam-color); box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15); }
+        .icon-holiday { background-color: var(--holiday-color); box-shadow: 0 0 0 3px rgba(23, 156, 142, 0.15); }
 
         .table-container { width: 100%; }
         table, thead, tbody, th, td, tr { display: block; width: 100%; }
@@ -175,23 +313,23 @@
             align-items: stretch;
             margin-bottom: 18px; 
             border: 1px solid #e1e8ef; 
-            border-radius: 16px; 
+            border-radius: 20px; 
             background-color: #fff; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
             overflow: hidden;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
             cursor: pointer; 
             position: relative;
         }
 
         tr:not(.toggle-row):hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(15, 43, 72, 0.08);
             border-color: #c9d6e4;
         }
 
         tr:not(.toggle-row):active {
-            transform: scale(0.99);
+            transform: scale(0.98);
         }
 
         td {
@@ -199,7 +337,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: flex-start;
-            padding: 20px;
+            padding: 22px;
             text-align: right;
             border-left: 1px solid #f0f4f8;
             flex: 1;
@@ -220,13 +358,13 @@
             opacity: 0.9;
         }
 
-        .holiday-row { border-right: 5px solid var(--holiday-color) !important; }
+        .holiday-row { border-right: 6px solid var(--holiday-color) !important; }
         .holiday-row td { color: var(--holiday-text); }
         
-        .academic-row { border-right: 5px solid var(--academic-color) !important; }
+        .academic-row { border-right: 6px solid var(--academic-color) !important; }
         .academic-row td { color: var(--academic-text); }
         
-        .exam-row { border-right: 5px solid var(--exam-color) !important; }
+        .exam-row { border-right: 6px solid var(--exam-color) !important; }
         .exam-row td { color: var(--exam-text); }
 
         .date-cell { display: inline-flex; gap: 10px; align-items: center; flex-wrap: wrap;}
@@ -244,10 +382,9 @@
         
         .past-event.holiday-row,
         .past-event.academic-row,
-        .past-event.exam-row { border-right: 5px solid #d0d8e0 !important; }
+        .past-event.exam-row { border-right: 6px solid #d0d8e0 !important; }
         
         .active-event {
-            /* جعل جميع الحواف متساوية السماكة */
             border: 2px solid var(--active-color) !important;
             background-color: #fff9f5 !important;
             box-shadow: 0 4px 20px rgba(230, 126, 34, 0.1) !important;
@@ -256,8 +393,8 @@
         .ended-badge {
             background-color: var(--past-color);
             color: white;
-            padding: 4px 10px;
-            border-radius: 6px;
+            padding: 5px 12px;
+            border-radius: 8px;
             font-size: 12px;
             margin-bottom: 8px;
             display: inline-block;
@@ -268,8 +405,8 @@
         .active-badge {
             background-color: var(--active-color);
             color: white;
-            padding: 4px 10px;
-            border-radius: 6px;
+            padding: 5px 12px;
+            border-radius: 8px;
             font-size: 12px;
             margin-bottom: 8px;
             display: inline-block;
@@ -284,7 +421,7 @@
             100% { box-shadow: 0 0 0 0 rgba(230, 126, 34, 0); }
         }
 
-        .past-hidden { display: none !important; }
+        .past-hidden, .filter-hidden { display: none !important; }
 
         .toggle-row {
             display: block !important;
@@ -303,7 +440,7 @@
             color: #fff;
             border: none;
             padding: 18px;
-            border-radius: 16px;
+            border-radius: 50px;
             font-family: inherit;
             font-size: 16px;
             font-weight: 700;
@@ -315,7 +452,7 @@
             align-items: center;
             gap: 10px;
         }
-        .past-toggle-btn:hover { background-color: #1a426b; transform: translateY(-2px); }
+        .past-toggle-btn:hover { background-color: #1a426b; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15, 43, 72, 0.2); }
 
         .page-footer {
             background-color: white;
@@ -325,7 +462,7 @@
             justify-content: center;
             gap: 20px;
             flex-wrap: wrap;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.06);
             position: fixed;
             bottom: 0;
             left: 0;
@@ -343,14 +480,14 @@
             font-weight: 700;
             font-size: 14px;
             background-color: var(--page-bg);
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 50px;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .footer-link:hover {
             background-color: var(--light-blue);
-            transform: translateY(-3px);
+            transform: translateY(-4px);
         }
 
         .icon-bg { color: var(--secondary-color); font-size: 18px; }
@@ -360,7 +497,9 @@
             .date-number { font-size: 38px; } 
             .date-text { font-size: 15px; }
             .page-footer { padding: 15px 10px; gap: 10px; }
-            .footer-link { padding: 8px 15px; font-size: 13px; }
+            .footer-link { padding: 10px 18px; font-size: 13px; }
+            
+            .custom-dropdown { max-width: 100%; }
 
             tr:not(.toggle-row) { 
                 flex-direction: column;
@@ -371,27 +510,24 @@
             td {
                 border-left: none;
                 border-bottom: 1px solid #f0f4f8;
-                padding: 15px 20px;
+                padding: 18px 22px;
                 flex: none !important;
             }
 
             td:last-child { border-bottom: none; }
             
             .holiday-row, .academic-row, .exam-row { border-right: none !important; }
-            .holiday-row td:first-child { border-top: 4px solid var(--holiday-color); }
-            .academic-row td:first-child { border-top: 4px solid var(--academic-color); }
-            .exam-row td:first-child { border-top: 4px solid var(--exam-color); }
+            .holiday-row td:first-child { border-top: 5px solid var(--holiday-color); }
+            .academic-row td:first-child { border-top: 5px solid var(--academic-color); }
+            .exam-row td:first-child { border-top: 5px solid var(--exam-color); }
             
             .past-event.holiday-row td:first-child,
             .past-event.academic-row td:first-child,
-            .past-event.exam-row td:first-child { border-top: 4px solid #d0d8e0; }
+            .past-event.exam-row td:first-child { border-top: 5px solid #d0d8e0; }
             
             .active-event td:first-child { border-top: none !important; }
             
-            .active-event {
-                border: 2px solid var(--active-color) !important;
-                /* تمت إزالة border-right السميك هنا لجعل الحواف متساوية */
-            }
+            .active-event { border: 2px solid var(--active-color) !important; }
         }
     </style>
 </head>
@@ -426,6 +562,37 @@
 
         <section class="table-section">
             <h2 class="table-title">الفصل الدراسي الثاني 1447هـ</h2>
+            <div class="title-divider"></div>
+            
+            <div class="filter-wrapper">
+                <div class="custom-dropdown" id="filterDropdown">
+                    <button class="dropdown-toggle" id="dropdown-toggle-btn">
+                        <div class="toggle-content">
+                            <i class="fas fa-bars-staggered filter-icon"></i>
+                            <span id="selected-filter-text">عرض جميع الأحداث</span>
+                        </div>
+                        <i class="fas fa-chevron-down chevron-icon"></i>
+                    </button>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-item selected" data-filter="all">
+                            <span class="item-icon icon-all"></span>
+                            <span>عرض جميع الأحداث</span>
+                        </div>
+                        <div class="dropdown-item" data-filter="academic-row">
+                            <span class="item-icon icon-academic"></span>
+                            <span>أكاديمي واعتذارات</span>
+                        </div>
+                        <div class="dropdown-item" data-filter="exam-row">
+                            <span class="item-icon icon-exam"></span>
+                            <span>الاختبارات والرصد</span>
+                        </div>
+                        <div class="dropdown-item" data-filter="holiday-row">
+                            <span class="item-icon icon-holiday"></span>
+                            <span>الإجازات الرسمية</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
             <div class="table-container">
                 <table>
@@ -478,7 +645,7 @@
                             <td data-label="اليوم">الخميس</td>
                             <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1447/09/16هـ</span><span class="gregorian-date">2026/03/05م</span></div></td>
                         </tr>
-                        <tr data-date="2026-03-29">
+                        <tr class="academic-row" data-date="2026-03-29">
                             <td data-label="الحدث الأكاديمي"><span>استئناف الدراسة بعد إجازة عيد الفطر المبارك</span></td>
                             <td data-label="اليوم">الأحد</td>
                             <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1447/10/10هـ</span><span class="gregorian-date">2026/03/29م</span></div></td>
@@ -488,7 +655,7 @@
                             <td data-label="اليوم">الخميس</td>
                             <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1447/12/04هـ</span><span class="gregorian-date">2026/05/21م</span></div></td>
                         </tr>
-                        <tr data-date="2026-06-02">
+                        <tr class="academic-row" data-date="2026-06-02">
                             <td data-label="الحدث الأكاديمي"><span>استئناف الدراسة بعد إجازة عيد الأضحى</span></td>
                             <td data-label="اليوم">الثلاثاء</td>
                             <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1447/12/16هـ</span><span class="gregorian-date">2026/06/02م</span></div></td>
@@ -597,124 +764,6 @@
             }
         }
 
-        function initEventsAndClicks() {
-            const today = new Date().getTime(); 
-            const rows = document.querySelectorAll('.table-section tbody tr:not(.toggle-row)'); 
-            let pastRows = [];
-            let activeOrNextFound = false;
-
-            rows.forEach(row => {
-                const dateString = row.getAttribute('data-date'); 
-                if (dateString) {
-                    const eventEnd = new Date(dateString + "T23:59:59").getTime(); 
-                    
-                    const startText = row.querySelector('.gregorian-date').innerText.replace('م','').trim();
-                    const parts = startText.split('/');
-                    const eventStart = new Date(`${parts[0]}-${parts[1]}-${parts[2]}T00:00:00`).getTime();
-                    
-                    if (today > eventEnd) {
-                        row.classList.add('past-event');
-                        row.classList.add('past-hidden'); 
-                        
-                        const titleCell = row.querySelector('td[data-label="الحدث الأكاديمي"]');
-                        if (titleCell && !titleCell.querySelector('.ended-badge')) {
-                            const badge = document.createElement('span');
-                            badge.className = 'ended-badge';
-                            badge.innerText = 'انتهى';
-                            titleCell.insertBefore(badge, titleCell.firstChild);
-                        }
-                        
-                        pastRows.push(row);
-                    } else if (today >= eventStart && today <= eventEnd) {
-                        row.classList.add('active-event');
-                        
-                        const titleCell = row.querySelector('td[data-label="الحدث الأكاديمي"]');
-                        if (titleCell && !titleCell.querySelector('.active-badge')) {
-                            const badge = document.createElement('span');
-                            badge.className = 'active-badge';
-                            badge.innerText = 'جاري الآن';
-                            titleCell.insertBefore(badge, titleCell.firstChild);
-                        }
-
-                        row.addEventListener('click', function() {
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                            startCountdown(
-                                row.querySelector('td[data-label="الحدث الأكاديمي"] span:not(.active-badge)').innerText.trim(),
-                                eventEnd,
-                                row.querySelectorAll('.gregorian-date')[row.querySelectorAll('.gregorian-date').length - 1].innerText,
-                                row.querySelectorAll('.hijri-date')[row.querySelectorAll('.hijri-date').length - 1].innerText,
-                                true
-                            );
-                        });
-
-                        if (!activeOrNextFound) {
-                            startCountdown(
-                                row.querySelector('td[data-label="الحدث الأكاديمي"] span:not(.active-badge)').innerText.trim(),
-                                eventEnd,
-                                row.querySelectorAll('.gregorian-date')[row.querySelectorAll('.gregorian-date').length - 1].innerText,
-                                row.querySelectorAll('.hijri-date')[row.querySelectorAll('.hijri-date').length - 1].innerText,
-                                true
-                            );
-                            activeOrNextFound = true;
-                        }
-                    } else {
-                        row.addEventListener('click', function() {
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                            startCountdown(
-                                row.querySelector('td[data-label="الحدث الأكاديمي"] span').innerText.trim(),
-                                eventStart,
-                                row.querySelector('.gregorian-date').innerText,
-                                row.querySelector('.hijri-date').innerText,
-                                false
-                            );
-                        });
-
-                        if (!activeOrNextFound) {
-                            startCountdown(
-                                row.querySelector('td[data-label="الحدث الأكاديمي"] span').innerText.trim(),
-                                eventStart,
-                                row.querySelector('.gregorian-date').innerText,
-                                row.querySelector('.hijri-date').innerText,
-                                false
-                            );
-                            activeOrNextFound = true;
-                        }
-                    }
-                }
-            });
-
-            if (pastRows.length > 0 && !document.getElementById('toggle-past-btn')) {
-                const toggleTr = document.createElement('tr');
-                toggleTr.className = 'toggle-row';
-                toggleTr.innerHTML = `
-                    <td colspan="4">
-                        <button id="toggle-past-btn" class="past-toggle-btn">
-                            عرض الأحداث المنتهية (${pastRows.length}) <i class="fas fa-chevron-down"></i>
-                        </button>
-                    </td>
-                `;
-                
-                const tbody = document.querySelector('.table-section tbody');
-                tbody.insertBefore(toggleTr, rows[0]);
-
-                document.getElementById('toggle-past-btn').addEventListener('click', function() {
-                    const isHidden = pastRows[0].classList.contains('past-hidden');
-                    
-                    pastRows.forEach(r => {
-                        if (isHidden) {
-                            r.classList.remove('past-hidden');
-                        } else {
-                            r.classList.add('past-hidden');
-                        }
-                    });
-                    
-                    this.innerHTML = isHidden 
-                        ? `إخفاء الأحداث المنتهية <i class="fas fa-chevron-up"></i>` 
-                        : `عرض الأحداث المنتهية (${pastRows.length}) <i class="fas fa-chevron-down"></i>`;
-                });
-            }
-        }
-
         function startCountdown(title, dateTarget, gDate, hDate, isActive) {
             clearInterval(countdownInterval);
             
@@ -781,7 +830,212 @@
             }, 1000);
         }
 
+        function findAndStartNearestEvent(filterValue = 'all') {
+            const today = new Date().getTime();
+            const rows = document.querySelectorAll('.table-section tbody tr:not(.toggle-row)');
+            let found = false;
+
+            for (let i = 0; i < rows.length; i++) {
+                let row = rows[i];
+                
+                if (filterValue !== 'all' && !row.classList.contains(filterValue)) {
+                    continue; 
+                }
+
+                const dateString = row.getAttribute('data-date');
+                if (!dateString) continue;
+
+                const eventEnd = new Date(dateString + "T23:59:59").getTime();
+                const startText = row.querySelector('.gregorian-date').innerText.replace('م','').trim();
+                const parts = startText.split('/');
+                const eventStart = new Date(`${parts[0]}-${parts[1]}-${parts[2]}T00:00:00`).getTime();
+
+                const titleElement = row.querySelector('td[data-label="الحدث الأكاديمي"] span:not(.active-badge):not(.ended-badge)');
+                if (!titleElement) continue;
+                
+                const title = titleElement.innerText.trim();
+                const gDates = row.querySelectorAll('.gregorian-date');
+                const hDates = row.querySelectorAll('.hijri-date');
+                
+                const gDateLast = gDates[gDates.length - 1].innerText;
+                const hDateLast = hDates[hDates.length - 1].innerText;
+                const gDateFirst = gDates[0].innerText;
+                const hDateFirst = hDates[0].innerText;
+
+                if (today >= eventStart && today <= eventEnd) {
+                    startCountdown(title, eventEnd, gDateLast, hDateLast, true);
+                    found = true;
+                    break; 
+                } else if (today < eventStart) {
+                    startCountdown(title, eventStart, gDateFirst, hDateFirst, false);
+                    found = true;
+                    break; 
+                }
+            }
+
+            if (!found) {
+                clearInterval(countdownInterval);
+                document.getElementById("event-title").innerHTML = "لا توجد أحداث قادمة";
+                document.getElementById("timer-status").innerText = "انتهت جميع أحداث هذا القسم";
+                document.getElementById("timer-status").style.color = "var(--text-gray)";
+                document.getElementById("g-day").innerText = "--";
+                document.getElementById("g-text").innerText = "----";
+                document.getElementById("h-day").innerText = "--";
+                document.getElementById("h-text").innerText = "----";
+                document.getElementById("days").innerHTML = "00";
+                document.getElementById("hours").innerHTML = "00";
+                document.getElementById("minutes").innerHTML = "00";
+                document.getElementById("days-label").innerText = "يوم";
+                document.getElementById("hours-label").innerText = "ساعة";
+                document.getElementById("minutes-label").innerText = "دقيقة";
+                
+                const card = document.getElementById("card-content");
+                card.classList.remove("fade-in");
+                void card.offsetWidth; 
+                card.classList.add("fade-in");
+            }
+        }
+
+        function initDropdownFilter() {
+            const dropdown = document.getElementById('filterDropdown');
+            const toggleBtn = document.getElementById('dropdown-toggle-btn');
+            const toggleText = document.getElementById('selected-filter-text');
+            const items = document.querySelectorAll('.dropdown-item');
+            const rows = document.querySelectorAll('.table-section tbody tr:not(.toggle-row)');
+
+            toggleBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdown.classList.toggle('active');
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!dropdown.contains(e.target)) {
+                    dropdown.classList.remove('active');
+                }
+            });
+
+            items.forEach(item => {
+                item.addEventListener('click', function() {
+                    items.forEach(i => i.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    const spanText = this.querySelectorAll('span')[1].innerText;
+                    toggleText.innerText = spanText;
+                    
+                    dropdown.classList.remove('active');
+
+                    const filterValue = this.getAttribute('data-filter');
+
+                    rows.forEach(row => {
+                        if (filterValue === 'all') {
+                            row.classList.remove('filter-hidden');
+                        } else {
+                            if (row.classList.contains(filterValue)) {
+                                row.classList.remove('filter-hidden');
+                            } else {
+                                row.classList.add('filter-hidden');
+                            }
+                        }
+                    });
+
+                    findAndStartNearestEvent(filterValue);
+                });
+            });
+        }
+
+        function initEventsAndClicks() {
+            const today = new Date().getTime(); 
+            const rows = document.querySelectorAll('.table-section tbody tr:not(.toggle-row)'); 
+            let pastRows = [];
+
+            rows.forEach(row => {
+                const dateString = row.getAttribute('data-date'); 
+                if (dateString) {
+                    const eventEnd = new Date(dateString + "T23:59:59").getTime(); 
+                    
+                    const startText = row.querySelector('.gregorian-date').innerText.replace('م','').trim();
+                    const parts = startText.split('/');
+                    const eventStart = new Date(`${parts[0]}-${parts[1]}-${parts[2]}T00:00:00`).getTime();
+                    
+                    if (today > eventEnd) {
+                        row.classList.add('past-event');
+                        row.classList.add('past-hidden'); 
+                        
+                        const titleCell = row.querySelector('td[data-label="الحدث الأكاديمي"]');
+                        if (titleCell && !titleCell.querySelector('.ended-badge')) {
+                            const badge = document.createElement('span');
+                            badge.className = 'ended-badge';
+                            badge.innerText = 'انتهى';
+                            titleCell.insertBefore(badge, titleCell.firstChild);
+                        }
+                        
+                        pastRows.push(row);
+                    } else if (today >= eventStart && today <= eventEnd) {
+                        row.classList.add('active-event');
+                        
+                        const titleCell = row.querySelector('td[data-label="الحدث الأكاديمي"]');
+                        if (titleCell && !titleCell.querySelector('.active-badge')) {
+                            const badge = document.createElement('span');
+                            badge.className = 'active-badge';
+                            badge.innerText = 'جاري الآن';
+                            titleCell.insertBefore(badge, titleCell.firstChild);
+                        }
+                    }
+
+                    row.addEventListener('click', function() {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        
+                        const title = row.querySelector('td[data-label="الحدث الأكاديمي"] span:not(.active-badge):not(.ended-badge)').innerText.trim();
+                        const gDates = row.querySelectorAll('.gregorian-date');
+                        const hDates = row.querySelectorAll('.hijri-date');
+                        
+                        if (today >= eventStart && today <= eventEnd) {
+                            startCountdown(title, eventEnd, gDates[gDates.length - 1].innerText, hDates[hDates.length - 1].innerText, true);
+                        } else if (today > eventEnd) {
+                            startCountdown(title, eventEnd, gDates[gDates.length - 1].innerText, hDates[hDates.length - 1].innerText, false);
+                        } else {
+                            startCountdown(title, eventStart, gDates[0].innerText, hDates[0].innerText, false);
+                        }
+                    });
+                }
+            });
+
+            if (pastRows.length > 0 && !document.getElementById('toggle-past-btn')) {
+                const toggleTr = document.createElement('tr');
+                toggleTr.className = 'toggle-row';
+                toggleTr.innerHTML = `
+                    <td colspan="4">
+                        <button id="toggle-past-btn" class="past-toggle-btn">
+                            عرض الأحداث المنتهية (${pastRows.length}) <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </td>
+                `;
+                
+                const tbody = document.querySelector('.table-section tbody');
+                tbody.insertBefore(toggleTr, rows[0]);
+
+                document.getElementById('toggle-past-btn').addEventListener('click', function() {
+                    const isHidden = pastRows[0].classList.contains('past-hidden');
+                    
+                    pastRows.forEach(r => {
+                        if (isHidden) {
+                            r.classList.remove('past-hidden');
+                        } else {
+                            r.classList.add('past-hidden');
+                        }
+                    });
+                    
+                    this.innerHTML = isHidden 
+                        ? `إخفاء الأحداث المنتهية <i class="fas fa-chevron-up"></i>` 
+                        : `عرض الأحداث المنتهية (${pastRows.length}) <i class="fas fa-chevron-down"></i>`;
+                });
+            }
+
+            findAndStartNearestEvent('all');
+        }
+
         calculateCurrentWeek();
+        initDropdownFilter();
         initEventsAndClicks();
     </script>
 </body>
