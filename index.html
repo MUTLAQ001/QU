@@ -83,7 +83,6 @@
             transition: background-color 0.4s ease, color 0.4s ease;
         }
 
-        /* ═══════════ الهيدر ═══════════ */
         .page-hero {
             background: linear-gradient(135deg, var(--header-grad-1) 0%, var(--header-grad-2) 55%, var(--header-grad-3) 100%);
             padding: 50px 20px 115px 20px;
@@ -245,7 +244,6 @@
             padding: 0 20px;
         }
 
-        /* ═══════════ بطاقة العداد ═══════════ */
         .countdown-section {
             display: flex;
             justify-content: center;
@@ -330,7 +328,6 @@
         .fade-in { animation: fadeIn 0.7s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ═══════════ قسم الجدول ═══════════ */
         .table-section { padding: 10px 0; }
 
         .table-title {
@@ -358,7 +355,6 @@
             margin-bottom: 26px;
         }
 
-        /* شرائح الفلترة */
         .filter-chips {
             display: flex;
             justify-content: center;
@@ -402,7 +398,6 @@
         .dot-exam { background: var(--exam-color); }
         .dot-holiday { background: var(--holiday-color); }
 
-        /* ═══════════ الخط الزمني ═══════════ */
         .table-container { width: 100%; }
 
         table, thead, tbody, th, td, tr { display: block; width: 100%; }
@@ -479,7 +474,6 @@
         .exam-row .type-icon { background: linear-gradient(135deg, #ef6a5a, #d5402f); }
         .holiday-row .type-icon { background: linear-gradient(135deg, #22b3a3, #128577); }
 
-        /* إطار متدرج يحيط بالبطاقة حسب نوع الحدث */
         .holiday-row, .academic-row, .exam-row {
             border: 2px solid transparent !important;
         }
@@ -515,7 +509,6 @@
         .hijri-date { font-weight: 700; color: var(--text-dark); direction: ltr; }
         .gregorian-date { border-right: 1px solid var(--card-border); padding-right: 10px; color: var(--text-gray); direction: ltr; font-size: 14px; }
 
-        /* زر إضافة للتقويم */
         .ics-btn {
             position: absolute;
             bottom: 12px;
@@ -544,7 +537,6 @@
 
         .past-event .ics-btn { display: none; }
 
-        /* الأحداث المنتهية والجارية */
         .past-event {
             background-color: var(--past-bg) !important;
             opacity: 0.85;
@@ -630,7 +622,6 @@
         .no-results i { font-size: 36px; margin-bottom: 14px; opacity: 0.4; display: block; }
         .no-results p { font-weight: 600; margin: 0; }
 
-        /* ═══════════ الفوتر ═══════════ */
         .page-footer {
             background-color: var(--card-bg);
             border-top: 1px solid var(--card-border);
@@ -676,7 +667,6 @@
         .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s ease; }
         .reveal.visible { opacity: 1; transform: translateY(0); }
 
-        /* ═══════════ ضبط الوضع الليلي ═══════════ */
         body.dark .date-box.gregorian { background-color: #2e4665; color: #dbe7f5; }
         body.dark .date-box.hijri { background-color: #0f4f48; color: #d2f3ee; }
 
@@ -712,7 +702,6 @@
             .reveal { opacity: 1; transform: none; }
         }
 
-        /* ═══════════ الجوال ═══════════ */
         @media (max-width: 768px) {
             .page-hero { padding: 45px 16px 100px 16px; }
             .page-title { font-size: 27px; }
@@ -913,7 +902,6 @@
             } catch (e) { console.error(e); }
         })();
 
-        /* ═══ صيغ الجمع العربية ═══ */
         function getArabicPlural(value, type) {
             let mod100 = value % 100;
             if (type === 'day') {
@@ -934,7 +922,6 @@
             }
         }
 
-        /* ═══ الأسبوع الحالي وشريط التقدم ═══ */
         function calculateCurrentWeek() {
             try {
                 const startDate = new Date("2026/06/28 00:00:00").getTime();
@@ -975,7 +962,6 @@
             }
         }
 
-        /* ═══ العداد التنازلي ═══ */
         function startCountdown(title, dateTarget, gDate, hDate, isActive) {
             try {
                 clearInterval(countdownInterval);
@@ -1073,7 +1059,6 @@
             }
         }
 
-        /* ═══ إيجاد أقرب حدث ═══ */
         function findAndStartNearestEvent(filterValue = 'all') {
             try {
                 const today = new Date().getTime();
@@ -1160,7 +1145,6 @@
             }
         }
 
-        /* ═══ شرائح الفلترة ═══ */
         function initChipFilter() {
             try {
                 const chips = document.querySelectorAll('#filterChips .chip');
@@ -1197,10 +1181,8 @@
             }
         }
 
-        /* ═══ تحميل الحدث كملف تقويم ICS ═══ */
         function downloadICS(title, startDateStr, endDateStr) {
             try {
-                // تواريخ اليوم الكامل: DTEND في صيغة ICS يجب أن يكون اليوم التالي لنهاية الحدث
                 const fmt = (d) => d.toISOString().slice(0, 10).replace(/-/g, '');
                 const start = new Date(startDateStr.replace(/-/g, '/'));
                 const end = new Date(endDateStr.replace(/-/g, '/'));
@@ -1236,7 +1218,6 @@
             }
         }
 
-        /* ═══ تهيئة الأحداث ═══ */
         function initEventsAndClicks() {
             try {
                 const today = new Date().getTime();
@@ -1290,7 +1271,6 @@
                                     }
                                 }
 
-                                // زر إضافة للتقويم (للأحداث غير المنتهية فقط)
                                 if (!row.querySelector('.ics-btn')) {
                                     const startAttr = row.getAttribute('data-start') || dateString;
                                     const btn = document.createElement('button');
@@ -1383,7 +1363,6 @@
             }
         }
 
-        /* ═══ ظهور تدريجي عند التمرير ═══ */
         function initScrollReveal() {
             try {
                 if (!('IntersectionObserver' in window)) {
