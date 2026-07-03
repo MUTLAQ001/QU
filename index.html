@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>التقويم الأكاديمي - جامعة القصيم</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Alexandria:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #0f2b48;
+            --primary-deep: #0a1f36;
+            --secondary-color: #179c8e;
+            --secondary-bright: #4dd8c8;
+            --secondary-soft: rgba(23, 156, 142, 0.1);
+            --page-bg: #eef3f9;
+            --card-bg: #ffffff;
+            --card-border: #e3eaf2;
+            --rail-color: #d5dfeb;
+            --text-dark: #22303e;
+            --text-gray: #7d8a97;
+            --past-color: #a0aab5;
+            --past-bg: #f3f4f6;
+            --active-color: #e67e22;
+
+            --holiday-color: #179c8e;
+            --holiday-text: #0e6f64;
+            --academic-color: #3498db;
+            --academic-text: #217dbb;
+            --exam-color: #e74c3c;
+            --exam-text: #c0392b;
+
+            --header-grad-1: #0f2b48;
+            --header-grad-2: #14385d;
+            --header-grad-3: #11554f;
+            --shadow-soft: 0 4px 15px rgba(15, 43, 72, 0.05);
+            --shadow-hover: 0 12px 30px rgba(15, 43, 72, 0.1);
+        }
+
+        body.dark {
+            --primary-color: #cfe3f5;
+            --primary-deep: #060e18;
+            --secondary-color: #2fc4b4;
+            --secondary-bright: #4dd8c8;
+            --secondary-soft: rgba(47, 196, 180, 0.12);
+            --page-bg: #0d1520;
+            --card-bg: #16202e;
+            --card-border: #24344a;
+            --rail-color: #2a3b52;
+            --text-dark: #e6edf5;
+            --text-gray: #8fa0b3;
+            --past-color: #5d6b7c;
+            --past-bg: #131b27;
+            --active-color: #f39c4a;
+
+            --holiday-text: #4dd8c8;
+            --academic-text: #5db4ec;
+            --exam-text: #f0736a;
+
+            --header-grad-1: #0a1826;
+            --header-grad-2: #0f2438;
+            --header-grad-3: #0c3531;
+            --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.3);
+            --shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.45);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background-color: var(--page-bg);
+            margin: 0;
+            padding: 0;
+            padding-bottom: 100px;
+            color: var(--text-dark);
+            min-height: 100vh;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        /* ═══════════ الهيدر ═══════════ */
+        .page-hero {
+            background: linear-gradient(135deg, var(--header-grad-1) 0%, var(--header-grad-2) 55%, var(--header-grad-3) 100%);
+            padding: 50px 20px 115px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
+            background-size: 26px 26px;
+            pointer-events: none;
+        }
+
+        .page-hero::after {
+            content: '';
+            position: absolute;
+            top: -90px;
+            left: -90px;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(23,156,142,0.28), transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-inner { position: relative; z-index: 2; }
+
+        .uni-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255,255,255,0.75);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .uni-eyebrow::before, .uni-eyebrow::after {
+            content: '';
+            width: 28px;
+            height: 1px;
+            background: rgba(255,255,255,0.3);
+        }
+
+        .page-title {
+            font-family: 'Alexandria', 'IBM Plex Sans Arabic', sans-serif;
+            color: #ffffff;
+            font-size: 34px;
+            font-weight: 800;
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .current-week-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+            padding: 9px 22px;
+            background-color: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(6px);
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .current-week-badge i { color: var(--secondary-bright); font-size: 13px; }
+
+        .semester-progress {
+            max-width: 380px;
+            margin: 22px auto 0 auto;
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            color: rgba(255,255,255,0.7);
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 7px;
+        }
+
+        .progress-track {
+            height: 8px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #2fc4b4, #4dd8c8);
+            border-radius: 10px;
+            transition: width 1.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 0 10px rgba(47, 196, 180, 0.5);
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            z-index: 5;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.22);
+            background: linear-gradient(150deg, rgba(255,255,255,0.16), rgba(255,255,255,0.04));
+            backdrop-filter: blur(8px);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, background 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.08);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+            background: linear-gradient(150deg, rgba(255,255,255,0.24), rgba(255,255,255,0.06));
+        }
+
+        .theme-toggle:active { transform: scale(0.94); }
+
+        .theme-toggle:focus-visible { outline: 2px solid var(--secondary-bright); outline-offset: 3px; }
+
+        .theme-toggle i {
+            position: absolute;
+            font-size: 17px;
+            transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .theme-toggle .icon-moon {
+            color: #eaf1fb;
+            opacity: 1;
+            transform: rotate(0deg) scale(1);
+        }
+
+        .theme-toggle .icon-sun {
+            color: #fbbf24;
+            opacity: 0;
+            transform: rotate(-70deg) scale(0.4);
+        }
+
+        body.dark .theme-toggle .icon-moon { opacity: 0; transform: rotate(70deg) scale(0.4); }
+        body.dark .theme-toggle .icon-sun { opacity: 1; transform: rotate(0deg) scale(1); }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto 30px auto;
+            padding: 0 20px;
+        }
+
+        /* ═══════════ بطاقة العداد ═══════════ */
+        .countdown-section {
+            display: flex;
+            justify-content: center;
+            margin-top: -78px;
+            margin-bottom: 50px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .countdown-wrapper {
+            width: 100%;
+            max-width: 520px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dates-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 20px 45px rgba(10, 31, 54, 0.18);
+            text-align: center;
+            transition: background-color 0.4s ease;
+        }
+
+        .countdown-title {
+            padding: 20px 20px 15px 20px;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1.4;
+        }
+
+        .dates-container { display: flex; flex-direction: row; }
+
+        .date-box {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .date-box.gregorian { background-color: #b9cbe0; color: #000; }
+        .date-box.hijri { background-color: #6d829e; color: #000; }
+
+        .date-number {
+            font-size: 42px;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+
+        .date-text { font-size: 16px; font-weight: 600; }
+
+        .timer-status {
+            font-size: 14px;
+            font-weight: 700;
+            margin-top: 22px;
+            margin-bottom: 14px;
+            display: block;
+            text-align: center;
+        }
+
+        .timer-container { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+
+        .timer-box {
+            border: 2px solid #6d829e;
+            border-radius: 6px;
+            padding: 5px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: transparent;
+        }
+
+        .timer-label { font-size: 16px; color: var(--text-dark); font-weight: 600; }
+        .timer-num { font-size: 26px; font-weight: 700; color: var(--text-dark); line-height: 1; font-variant-numeric: tabular-nums; }
+
+        .fade-in { animation: fadeIn 0.7s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ═══════════ قسم الجدول ═══════════ */
+        .table-section { padding: 10px 0; }
+
+        .table-title {
+            font-family: 'Alexandria', sans-serif;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 12px;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .title-divider {
+            width: 70px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary-color), var(--secondary-bright));
+            margin: 0 auto 12px auto;
+            border-radius: 4px;
+        }
+
+        .events-count {
+            text-align: center;
+            color: var(--text-gray);
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 26px;
+        }
+
+        /* شرائح الفلترة */
+        .filter-chips {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 10px 20px;
+            border-radius: 50px;
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            color: var(--text-gray);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .chip:hover { transform: translateY(-2px); border-color: var(--secondary-color); color: var(--text-dark); }
+        .chip:focus-visible { outline: 2px solid var(--secondary-color); outline-offset: 2px; }
+
+        .chip.selected {
+            background: var(--primary-deep);
+            border-color: var(--primary-deep);
+            color: #fff;
+            box-shadow: 0 6px 18px rgba(15, 43, 72, 0.25);
+        }
+
+        body.dark .chip.selected { background: var(--secondary-color); border-color: var(--secondary-color); color: #06211d; }
+
+        .chip-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+        .dot-all { background: var(--secondary-color); }
+        .dot-academic { background: var(--academic-color); }
+        .dot-exam { background: var(--exam-color); }
+        .dot-holiday { background: var(--holiday-color); }
+
+        /* ═══════════ الخط الزمني ═══════════ */
+        .table-container { width: 100%; }
+
+        table, thead, tbody, th, td, tr { display: block; width: 100%; }
+        thead { display: none; }
+        table { background: transparent; border-collapse: collapse; }
+
+        tr:not(.toggle-row) {
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            margin-bottom: 18px;
+            border: 1px solid var(--card-border);
+            border-radius: 18px;
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow-soft);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s, background-color 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        tr:not(.toggle-row):hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        tr:not(.toggle-row):active { transform: scale(0.98); }
+
+        td {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px 22px;
+            text-align: right;
+            border-left: 1px solid var(--card-border);
+            flex: 1;
+            line-height: 1.6;
+        }
+
+        td:last-child { border-left: none; }
+        td:first-child { flex: 2; }
+        td[colspan="2"] { flex: 2; }
+
+        td::before {
+            content: attr(data-label);
+            font-size: 12px;
+            color: var(--secondary-color);
+            font-weight: 700;
+            margin-bottom: 7px;
+            opacity: 0.9;
+        }
+
+        .event-name {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .type-icon {
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+            border-radius: 11px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #fff;
+            margin-top: 2px;
+        }
+
+        .academic-row .type-icon { background: linear-gradient(135deg, #4aa8e0, #2b83c2); }
+        .exam-row .type-icon { background: linear-gradient(135deg, #ef6a5a, #d5402f); }
+        .holiday-row .type-icon { background: linear-gradient(135deg, #22b3a3, #128577); }
+
+        /* إطار متدرج يحيط بالبطاقة حسب نوع الحدث */
+        .holiday-row, .academic-row, .exam-row {
+            border: 2px solid transparent !important;
+        }
+
+        .academic-row {
+            background: linear-gradient(var(--card-bg), var(--card-bg)) padding-box,
+                        linear-gradient(135deg, #4aa8e0, #2b83c2) border-box !important;
+        }
+        .exam-row {
+            background: linear-gradient(var(--card-bg), var(--card-bg)) padding-box,
+                        linear-gradient(135deg, #ef6a5a, #d5402f) border-box !important;
+        }
+        .holiday-row {
+            background: linear-gradient(var(--card-bg), var(--card-bg)) padding-box,
+                        linear-gradient(135deg, #22b3a3, #128577) border-box !important;
+        }
+
+        .holiday-row td { color: var(--holiday-text); }
+        .academic-row td { color: var(--academic-text); }
+        .exam-row td { color: var(--exam-text); }
+
+        .day-chip {
+            display: inline-block;
+            background: var(--secondary-soft);
+            color: var(--text-dark);
+            padding: 4px 14px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .date-cell { display: inline-flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .hijri-date { font-weight: 700; color: var(--text-dark); direction: ltr; }
+        .gregorian-date { border-right: 1px solid var(--card-border); padding-right: 10px; color: var(--text-gray); direction: ltr; font-size: 14px; }
+
+        /* زر إضافة للتقويم */
+        .ics-btn {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            border: 1px solid var(--card-border);
+            background: var(--page-bg);
+            color: var(--text-gray);
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s;
+            z-index: 2;
+        }
+
+        .ics-btn:hover {
+            background: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: #fff;
+            transform: scale(1.1);
+        }
+
+        .past-event .ics-btn { display: none; }
+
+        /* الأحداث المنتهية والجارية */
+        .past-event {
+            background-color: var(--past-bg) !important;
+            opacity: 0.85;
+        }
+        .past-event td, .past-event .hijri-date, .past-event .gregorian-date {
+            color: var(--past-color) !important;
+        }
+        .past-event .type-icon { background: #b8c0ca !important; }
+        .past-event.holiday-row,
+        .past-event.academic-row,
+        .past-event.exam-row {
+            background: linear-gradient(var(--past-bg), var(--past-bg)) padding-box,
+                        linear-gradient(135deg, #d5dce4, #b8c0ca) border-box !important;
+        }
+
+        .active-event {
+            border: 2px solid var(--active-color) !important;
+            box-shadow: 0 6px 25px rgba(230, 126, 34, 0.18) !important;
+        }
+
+        .ended-badge, .active-badge {
+            color: white;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            margin-bottom: 8px;
+            display: inline-block;
+            align-self: flex-start;
+            font-weight: 700;
+        }
+
+        .ended-badge { background-color: var(--past-color); }
+        .active-badge { background-color: var(--active-color); animation: pulse 2s infinite; }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(230, 126, 34, 0.4); }
+            70% { box-shadow: 0 0 0 7px rgba(230, 126, 34, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(230, 126, 34, 0); }
+        }
+
+        .past-hidden, .filter-hidden { display: none !important; }
+
+        .toggle-row {
+            display: block !important;
+            margin-bottom: 22px;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            cursor: default !important;
+        }
+        .toggle-row td { padding: 0 !important; border: none !important; background: transparent !important; }
+        .toggle-row td::before { display: none !important; }
+
+        .past-toggle-btn {
+            width: 100%;
+            background: transparent;
+            color: var(--text-gray);
+            border: 1.5px dashed var(--card-border);
+            padding: 15px;
+            border-radius: 16px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .past-toggle-btn:hover {
+            border-color: var(--secondary-color);
+            color: var(--secondary-color);
+            background: var(--secondary-soft);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 45px 20px;
+            color: var(--text-gray);
+            display: none;
+        }
+        .no-results i { font-size: 36px; margin-bottom: 14px; opacity: 0.4; display: block; }
+        .no-results p { font-weight: 600; margin: 0; }
+
+        /* ═══════════ الفوتر ═══════════ */
+        .page-footer {
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            padding: 16px 0;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.06);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: background-color 0.4s ease;
+        }
+
+        .footer-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: 14px;
+            background-color: var(--page-bg);
+            border: 1px solid var(--card-border);
+            padding: 11px 24px;
+            border-radius: 50px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .footer-link:hover {
+            border-color: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(23, 156, 142, 0.15);
+        }
+
+        .icon-bg { color: var(--secondary-color); font-size: 17px; }
+
+        .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* ═══════════ ضبط الوضع الليلي ═══════════ */
+        body.dark .date-box.gregorian { background-color: #2e4665; color: #dbe7f5; }
+        body.dark .date-box.hijri { background-color: #0f4f48; color: #d2f3ee; }
+
+        body.dark .timer-box { border-color: #46617f; }
+
+        body.dark .past-event.holiday-row,
+        body.dark .past-event.academic-row,
+        body.dark .past-event.exam-row {
+            background: linear-gradient(var(--past-bg), var(--past-bg)) padding-box,
+                        linear-gradient(135deg, #33445a, #26364a) border-box !important;
+        }
+        body.dark .past-event .type-icon { background: #43556b !important; }
+        body.dark .ended-badge { background-color: #43556b; }
+
+        body.dark .academic-row {
+            background: linear-gradient(var(--card-bg), var(--card-bg)) padding-box,
+                        linear-gradient(135deg, #2f6f9e, #1e517a) border-box !important;
+        }
+        body.dark .exam-row {
+            background: linear-gradient(var(--card-bg), var(--card-bg)) padding-box,
+                        linear-gradient(135deg, #b64a3d, #8f3226) border-box !important;
+        }
+        body.dark .holiday-row {
+            background: linear-gradient(var(--card-bg), var(--card-bg)) padding-box,
+                        linear-gradient(135deg, #1a8578, #10625a) border-box !important;
+        }
+
+        body.dark .day-chip { color: var(--secondary-bright); }
+        body.dark .ics-btn { background: #1d2a3b; }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation: none !important; transition: none !important; }
+            .reveal { opacity: 1; transform: none; }
+        }
+
+        /* ═══════════ الجوال ═══════════ */
+        @media (max-width: 768px) {
+            .page-hero { padding: 45px 16px 100px 16px; }
+            .page-title { font-size: 27px; }
+            .date-box { padding: 15px 10px; }
+            .date-number { font-size: 38px; }
+            .date-text { font-size: 15px; }
+            .page-footer { padding: 12px 10px; gap: 10px; }
+            .footer-link { padding: 10px 18px; font-size: 13px; }
+            .filter-chips { gap: 8px; }
+            .chip { padding: 9px 15px; font-size: 13px; }
+
+            tr:not(.toggle-row) {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 0;
+            }
+
+            td {
+                border-left: none;
+                border-bottom: 1px solid var(--card-border);
+                padding: 16px 20px;
+                flex: none !important;
+            }
+
+            td:last-child { border-bottom: none; }
+
+            .active-event { border: 2px solid var(--active-color) !important; }
+
+            .ics-btn { bottom: 10px; left: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="page-hero">
+        <button class="theme-toggle" id="theme-toggle" aria-label="تبديل الوضع الليلي"><i class="fas fa-moon icon-moon"></i><i class="fas fa-sun icon-sun"></i></button>
+        <div class="hero-inner">
+            <div class="uni-eyebrow">جامعة القصيم</div>
+            <h1 class="page-title">التقويم الأكاديمي</h1>
+            <div class="current-week-badge" id="current-week-display"><i class="fas fa-calendar-week"></i><span>جاري حساب الأسبوع...</span></div>
+            <div class="semester-progress" id="semester-progress" style="display:none;">
+                <div class="progress-labels">
+                    <span>تقدم الفصل الصيفي</span>
+                    <span id="progress-percent">0%</span>
+                </div>
+                <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <section class="countdown-section">
+            <div class="countdown-wrapper" id="card-content">
+                <div class="dates-card">
+                    <div class="countdown-title" id="event-title">يتم تحميل الحدث...</div>
+                    <div class="dates-container">
+                        <div class="date-box gregorian"><span class="date-number" id="g-day">--</span><span class="date-text" id="g-text">--</span></div>
+                        <div class="date-box hijri"><span class="date-number" id="h-day">--</span><span class="date-text" id="h-text">--</span></div>
+                    </div>
+                </div>
+
+                <span id="timer-status" class="timer-status">جاري الحساب...</span>
+                <div class="timer-container" id="timer">
+                    <div class="timer-box"><span class="timer-label" id="days-label">يوم</span><span class="timer-num" id="days">00</span></div>
+                    <div class="timer-box"><span class="timer-label" id="hours-label">ساعة</span><span class="timer-num" id="hours">00</span></div>
+                    <div class="timer-box"><span class="timer-label" id="minutes-label">دقيقة</span><span class="timer-num" id="minutes">00</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="table-section">
+            <h2 class="table-title">الفصل الصيفي والعام الأكاديمي 1447-1448هـ</h2>
+            <div class="title-divider"></div>
+            <div class="events-count" id="events-count"></div>
+
+            <div class="filter-chips" id="filterChips">
+                <button class="chip selected" data-filter="all"><span class="chip-dot dot-all"></span>الكل</button>
+                <button class="chip" data-filter="academic-row"><span class="chip-dot dot-academic"></span>أكاديمي واعتذارات</button>
+                <button class="chip" data-filter="exam-row"><span class="chip-dot dot-exam"></span>الاختبارات والرصد</button>
+                <button class="chip" data-filter="holiday-row"><span class="chip-dot dot-holiday"></span>الإجازات الرسمية</button>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>الحدث الأكاديمي</th>
+                            <th>اليوم</th>
+                            <th>البداية</th>
+                            <th>النهاية</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr class="exam-row reveal" data-date="2026-06-20">
+                            <td data-label="الحدث الأكاديمي"><div class="event-name"><span class="type-icon"><i class="fas fa-clipboard-check"></i></span><span>آخر موعد لرصد الدرجات للفصل الدراسي الثاني (472)</span></div></td>
+                            <td data-label="اليوم"><span class="day-chip">السبت</span></td>
+                            <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1448/01/05هـ</span><span class="gregorian-date">2026/06/20م</span></div></td>
+                        </tr>
+
+                        <tr class="exam-row reveal" data-date="2026-06-22">
+                            <td data-label="الحدث الأكاديمي"><div class="event-name"><span class="type-icon"><i class="fas fa-calculator"></i></span><span>حساب المعدل التراكمي للفصل الدراسي الثاني (472)</span></div></td>
+                            <td data-label="اليوم"><span class="day-chip">الاثنين</span></td>
+                            <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1448/01/07هـ</span><span class="gregorian-date">2026/06/22م</span></div></td>
+                        </tr>
+
+                        <tr class="academic-row reveal" data-date="2026-06-28">
+                            <td data-label="الحدث الأكاديمي"><div class="event-name"><span class="type-icon"><i class="fas fa-book-open"></i></span><span>بداية الدراسة للفصل الدراسي الصيفي (475) من العام الجامعي 1447 هـ</span></div></td>
+                            <td data-label="اليوم"><span class="day-chip">الأحد</span></td>
+                            <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1448/01/13هـ</span><span class="gregorian-date">2026/06/28م</span></div></td>
+                        </tr>
+
+                        <tr class="academic-row reveal" data-date="2026-08-06" data-start="2026-07-26">
+                            <td data-label="الحدث الأكاديمي"><div class="event-name"><span class="type-icon"><i class="fas fa-exchange-alt"></i></span><span>تغيير التخصص والمقر على الفصل الدراسي الأول (481)</span></div></td>
+                            <td data-label="اليوم"><span class="day-chip">الأحد - الخميس</span></td>
+                            <td data-label="البداية"><div class="date-cell"><span class="hijri-date">1448/02/12هـ</span><span class="gregorian-date">2026/07/26م</span></div></td>
+                            <td data-label="النهاية"><div class="date-cell"><span class="hijri-date">1448/02/23هـ</span><span class="gregorian-date">2026/08/06م</span></div></td>
+                        </tr>
+
+                        <tr class="academic-row reveal" data-date="2026-08-11" data-start="2026-08-03">
+                            <td data-label="الحدث الأكاديمي"><div class="event-name"><span class="type-icon"><i class="fas fa-right-left"></i></span><span>التحويل من خارج الجامعة إلى جامعة القصيم على الفصل الدراسي الأول (481)</span></div></td>
+                            <td data-label="اليوم"><span class="day-chip">الاثنين - الثلاثاء</span></td>
+                            <td data-label="البداية"><div class="date-cell"><span class="hijri-date">1448/02/20هـ</span><span class="gregorian-date">2026/08/03م</span></div></td>
+                            <td data-label="النهاية"><div class="date-cell"><span class="hijri-date">1448/02/28هـ</span><span class="gregorian-date">2026/08/11م</span></div></td>
+                        </tr>
+
+                        <tr class="exam-row reveal" data-date="2026-08-19" data-start="2026-08-16">
+                            <td data-label="الحدث الأكاديمي"><div class="event-name"><span class="type-icon"><i class="fas fa-file-pen"></i></span><span>الاختبارات النهائية للفصل الصيفي (475)</span></div></td>
+                            <td data-label="اليوم"><span class="day-chip">الأحد - الأربعاء</span></td>
+                            <td data-label="البداية"><div class="date-cell"><span class="hijri-date">1448/03/03هـ</span><span class="gregorian-date">2026/08/16م</span></div></td>
+                            <td data-label="النهاية"><div class="date-cell"><span class="hijri-date">1448/03/06هـ</span><span class="gregorian-date">2026/08/19م</span></div></td>
+                        </tr>
+
+                        <tr class="holiday-row reveal" data-date="2026-08-19">
+                            <td data-label="الحدث الأكاديمي"><div class="event-name"><span class="type-icon"><i class="fas fa-umbrella-beach"></i></span><span>إجازة الطلبة المسجلين في الفصل الصيفي (475) بنهاية دوام يوم الأربعاء</span></div></td>
+                            <td data-label="اليوم"><span class="day-chip">الأربعاء</span></td>
+                            <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1448/03/06هـ</span><span class="gregorian-date">2026/08/19م</span></div></td>
+                        </tr>
+
+                        <tr class="exam-row reveal" data-date="2026-08-21">
+                            <td data-label="الحدث الأكاديمي"><div class="event-name"><span class="type-icon"><i class="fas fa-clipboard-check"></i></span><span>آخر موعد لرصد الدرجات للفصل الصيفي (475)</span></div></td>
+                            <td data-label="اليوم"><span class="day-chip">الجمعة</span></td>
+                            <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1448/03/08هـ</span><span class="gregorian-date">2026/08/21م</span></div></td>
+                        </tr>
+
+                        <tr class="academic-row reveal" data-date="2026-08-22">
+                            <td data-label="الحدث الأكاديمي"><div class="event-name"><span class="type-icon"><i class="fas fa-calculator"></i></span><span>احتساب المعدل التراكمي للفصل الصيفي (475)</span></div></td>
+                            <td data-label="اليوم"><span class="day-chip">السبت</span></td>
+                            <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1448/03/09هـ</span><span class="gregorian-date">2026/08/22م</span></div></td>
+                        </tr>
+
+                        <tr class="academic-row reveal" data-date="2026-08-23">
+                            <td data-label="الحدث الأكاديمي"><div class="event-name"><span class="type-icon"><i class="fas fa-book-open"></i></span><span>بداية الدراسة للفصل الدراسي الأول (481) من العام الجامعي 1448 هـ</span></div></td>
+                            <td data-label="اليوم"><span class="day-chip">الأحد</span></td>
+                            <td data-label="التاريخ" colspan="2"><div class="date-cell"><span class="hijri-date">1448/03/10هـ</span><span class="gregorian-date">2026/08/23م</span></div></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                <div class="no-results" id="no-results">
+                    <i class="fas fa-calendar-xmark"></i>
+                    <p>لا توجد أحداث في هذا التصنيف</p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer class="page-footer">
+        <a href="https://t.me/Qassim_U" class="footer-link" target="_blank" rel="noopener noreferrer">
+            <span class="icon-bg"><i class="fas fa-users"></i></span>
+            <span>Qassim_U</span>
+        </a>
+        <a href="https://t.me/Qassim_QU" class="footer-link" target="_blank" rel="noopener noreferrer">
+            <span class="icon-bg"><i class="fas fa-bullhorn"></i></span>
+            <span>Qassim_QU</span>
+        </a>
+    </footer>
+
+    <script>
+        let countdownInterval = null;
+
+        (function initTheme() {
+            try {
+                const btn = document.getElementById('theme-toggle');
+                let saved = null;
+                try { saved = localStorage.getItem('qu-theme'); } catch (e) {}
+
+                if (saved === 'dark') {
+                    document.body.classList.add('dark');
+                }
+
+                btn.addEventListener('click', function() {
+                    const isDark = document.body.classList.toggle('dark');
+                    try { localStorage.setItem('qu-theme', isDark ? 'dark' : 'light'); } catch (e) {}
+                });
+            } catch (e) { console.error(e); }
+        })();
+
+        /* ═══ صيغ الجمع العربية ═══ */
+        function getArabicPlural(value, type) {
+            let mod100 = value % 100;
+            if (type === 'day') {
+                if (value === 1) return 'يوم';
+                if (value === 2) return 'يومان';
+                if (mod100 >= 3 && mod100 <= 10) return 'أيام';
+                return 'يوم';
+            } else if (type === 'hour') {
+                if (value === 1) return 'ساعة';
+                if (value === 2) return 'ساعتان';
+                if (mod100 >= 3 && mod100 <= 10) return 'ساعات';
+                return 'ساعة';
+            } else if (type === 'minute') {
+                if (value === 1) return 'دقيقة';
+                if (value === 2) return 'دقيقتان';
+                if (mod100 >= 3 && mod100 <= 10) return 'دقائق';
+                return 'دقيقة';
+            }
+        }
+
+        /* ═══ الأسبوع الحالي وشريط التقدم ═══ */
+        function calculateCurrentWeek() {
+            try {
+                const startDate = new Date("2026/06/28 00:00:00").getTime();
+                const endDate = new Date("2026/08/19 23:59:59").getTime();
+                const now = new Date().getTime();
+                const displayElement = document.getElementById("current-week-display");
+                const badgeSpan = displayElement ? displayElement.querySelector('span') : null;
+                const progressWrap = document.getElementById("semester-progress");
+                const progressFill = document.getElementById("progress-fill");
+                const progressPercent = document.getElementById("progress-percent");
+
+                if (!displayElement || !badgeSpan) return;
+
+                if (now < startDate) {
+                    badgeSpan.innerText = "الفصل الدراسي لم يبدأ بعد";
+                } else if (now > endDate) {
+                    badgeSpan.innerText = "انتهى الفصل الدراسي";
+                    if (progressWrap && progressFill && progressPercent) {
+                        progressWrap.style.display = "block";
+                        progressPercent.innerText = "100%";
+                        setTimeout(() => { progressFill.style.width = "100%"; }, 300);
+                    }
+                } else {
+                    const diffTime = now - startDate;
+                    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                    const currentWeek = Math.floor(diffDays / 7) + 1;
+                    badgeSpan.innerText = "الأسبوع الحالي: " + currentWeek;
+
+                    if (progressWrap && progressFill && progressPercent) {
+                        const percent = Math.min(100, Math.max(0, Math.round((diffTime / (endDate - startDate)) * 100)));
+                        progressWrap.style.display = "block";
+                        progressPercent.innerText = percent + "%";
+                        setTimeout(() => { progressFill.style.width = percent + "%"; }, 300);
+                    }
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        /* ═══ العداد التنازلي ═══ */
+        function startCountdown(title, dateTarget, gDate, hDate, isActive) {
+            try {
+                clearInterval(countdownInterval);
+
+                const card = document.getElementById("card-content");
+                if (card) {
+                    card.classList.remove("fade-in");
+                    void card.offsetWidth;
+                    card.classList.add("fade-in");
+                }
+
+                const titleEl = document.getElementById("event-title");
+                if (titleEl) titleEl.innerHTML = title;
+
+                const statusEl = document.getElementById("timer-status");
+                if (statusEl) {
+                    if (isActive) {
+                        statusEl.innerText = "الوقت المتبقي لانتهاء الحدث:";
+                        statusEl.style.color = "var(--active-color)";
+                    } else {
+                        statusEl.innerText = "الوقت المتبقي لبداية الحدث:";
+                        statusEl.style.color = "var(--secondary-color)";
+                    }
+                }
+
+                const gDayEl = document.getElementById("g-day");
+                const gTextEl = document.getElementById("g-text");
+                if (gDayEl && gTextEl) {
+                    const gParts = gDate.split('/');
+                    const months = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+                    if (gParts.length === 3) {
+                         gDayEl.innerText = gParts[2].replace('م','');
+                         gTextEl.innerText = months[parseInt(gParts[1], 10) - 1] + ' ' + gParts[0];
+                    } else {
+                        gDayEl.innerText = "--";
+                        gTextEl.innerText = gDate;
+                    }
+                }
+
+                const hDayEl = document.getElementById("h-day");
+                const hTextEl = document.getElementById("h-text");
+                if (hDayEl && hTextEl) {
+                    const hParts = hDate.split('/');
+                    const hMonths = ["محرم", "صفر", "ربيع الأول", "ربيع الثاني", "جمادى الأول", "جمادى الآخرة", "رجب", "شعبان", "رمضان", "شوال", "ذو القعدة", "ذو الحجة"];
+                    if (hParts.length === 3) {
+                         hDayEl.innerText = hParts[2].replace('هـ','');
+                         hTextEl.innerText = hMonths[parseInt(hParts[1], 10) - 1] + ' ' + hParts[0];
+                    } else {
+                        hDayEl.innerText = "--";
+                        hTextEl.innerText = hDate;
+                    }
+                }
+
+                function tick() {
+                    try {
+                        const now = new Date().getTime();
+                        const distance = dateTarget - now;
+
+                        const daysEl = document.getElementById("days");
+                        const hoursEl = document.getElementById("hours");
+                        const minutesEl = document.getElementById("minutes");
+
+                        if (distance <= 0) {
+                            clearInterval(countdownInterval);
+                            if (daysEl) daysEl.innerHTML = "00";
+                            if (hoursEl) hoursEl.innerHTML = "00";
+                            if (minutesEl) minutesEl.innerHTML = "00";
+                            return;
+                        }
+
+                        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+
+                        if (daysEl) daysEl.innerHTML = days < 10 && days > 0 ? "0" + days : days;
+                        if (hoursEl) hoursEl.innerHTML = hours < 10 ? "0" + hours : hours;
+                        if (minutesEl) minutesEl.innerHTML = minutes < 10 ? "0" + minutes : minutes;
+
+                        const daysLabel = document.getElementById("days-label");
+                        const hoursLabel = document.getElementById("hours-label");
+                        const minutesLabel = document.getElementById("minutes-label");
+
+                        if (daysLabel) daysLabel.innerText = getArabicPlural(days, 'day');
+                        if (hoursLabel) hoursLabel.innerText = getArabicPlural(hours, 'hour');
+                        if (minutesLabel) minutesLabel.innerText = getArabicPlural(minutes, 'minute');
+                    } catch (innerErr) {
+                        console.error(innerErr);
+                    }
+                }
+
+                tick();
+                countdownInterval = setInterval(tick, 1000);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        /* ═══ إيجاد أقرب حدث ═══ */
+        function findAndStartNearestEvent(filterValue = 'all') {
+            try {
+                const today = new Date().getTime();
+                const rows = document.querySelectorAll('.table-section tbody tr:not(.toggle-row)');
+                let found = false;
+
+                for (let i = 0; i < rows.length; i++) {
+                    let row = rows[i];
+
+                    if (filterValue !== 'all' && !row.classList.contains(filterValue)) {
+                        continue;
+                    }
+
+                    const dateString = row.getAttribute('data-date');
+                    if (!dateString) continue;
+
+                    try {
+                        const eventEnd = new Date(dateString.replace(/-/g, "/") + " 23:59:59").getTime();
+
+                        const gregorianEl = row.querySelector('.gregorian-date');
+                        if (!gregorianEl) continue;
+
+                        const startText = (gregorianEl.textContent || gregorianEl.innerText).trim();
+                        const parts = startText.replace(/[^\d/]/g, '').split('/');
+                        if (parts.length !== 3) continue;
+
+                        const eventStart = new Date(`${parts[0]}/${parts[1]}/${parts[2]} 00:00:00`).getTime();
+
+                        const titleElement = row.querySelector('td[data-label="الحدث الأكاديمي"] .event-name span:last-child');
+                        if (!titleElement) continue;
+
+                        const title = (titleElement.textContent || titleElement.innerText).trim();
+                        const gDates = row.querySelectorAll('.gregorian-date');
+                        const hDates = row.querySelectorAll('.hijri-date');
+
+                        if (gDates.length === 0 || hDates.length === 0) continue;
+
+                        const gDateLast = (gDates[gDates.length - 1].textContent || gDates[gDates.length - 1].innerText).trim();
+                        const hDateLast = (hDates[hDates.length - 1].textContent || hDates[hDates.length - 1].innerText).trim();
+                        const gDateFirst = (gDates[0].textContent || gDates[0].innerText).trim();
+                        const hDateFirst = (hDates[0].textContent || hDates[0].innerText).trim();
+
+                        if (today >= eventStart && today <= eventEnd) {
+                            startCountdown(title, eventEnd, gDateLast, hDateLast, true);
+                            found = true;
+                            break;
+                        } else if (today < eventStart) {
+                            startCountdown(title, eventStart, gDateFirst, hDateFirst, false);
+                            found = true;
+                            break;
+                        }
+                    } catch (rowErr) {
+                        console.error(rowErr);
+                    }
+                }
+
+                if (!found) {
+                    clearInterval(countdownInterval);
+                    const titleEl = document.getElementById("event-title");
+                    const statusEl = document.getElementById("timer-status");
+
+                    if (titleEl) titleEl.innerHTML = "لا توجد أحداث قادمة";
+                    if (statusEl) {
+                        statusEl.innerText = "انتهت جميع أحداث هذا القسم";
+                        statusEl.style.color = "var(--text-gray)";
+                    }
+
+                    ["g-day","h-day"].forEach(id => { const el = document.getElementById(id); if (el) el.innerText = "--"; });
+                    ["g-text","h-text"].forEach(id => { const el = document.getElementById(id); if (el) el.innerText = "----"; });
+                    ["days","hours","minutes"].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = "00"; });
+
+                    const labels = { "days-label": "يوم", "hours-label": "ساعة", "minutes-label": "دقيقة" };
+                    Object.keys(labels).forEach(id => { const el = document.getElementById(id); if (el) el.innerText = labels[id]; });
+
+                    const card = document.getElementById("card-content");
+                    if (card) {
+                        card.classList.remove("fade-in");
+                        void card.offsetWidth;
+                        card.classList.add("fade-in");
+                    }
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        /* ═══ شرائح الفلترة ═══ */
+        function initChipFilter() {
+            try {
+                const chips = document.querySelectorAll('#filterChips .chip');
+                const rows = document.querySelectorAll('.table-section tbody tr:not(.toggle-row)');
+                const noResults = document.getElementById('no-results');
+
+                chips.forEach(chip => {
+                    chip.addEventListener('click', function() {
+                        chips.forEach(c => c.classList.remove('selected'));
+                        this.classList.add('selected');
+
+                        const filterValue = this.getAttribute('data-filter');
+
+                        rows.forEach(row => {
+                            if (filterValue === 'all' || row.classList.contains(filterValue)) {
+                                row.classList.remove('filter-hidden');
+                            } else {
+                                row.classList.add('filter-hidden');
+                            }
+                        });
+
+                        if (noResults) {
+                            const anyMatch = filterValue === 'all'
+                                ? rows.length > 0
+                                : Array.from(rows).some(r => r.classList.contains(filterValue));
+                            noResults.style.display = anyMatch ? 'none' : 'block';
+                        }
+
+                        findAndStartNearestEvent(filterValue);
+                    });
+                });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        /* ═══ تحميل الحدث كملف تقويم ICS ═══ */
+        function downloadICS(title, startDateStr, endDateStr) {
+            try {
+                // تواريخ اليوم الكامل: DTEND في صيغة ICS يجب أن يكون اليوم التالي لنهاية الحدث
+                const fmt = (d) => d.toISOString().slice(0, 10).replace(/-/g, '');
+                const start = new Date(startDateStr.replace(/-/g, '/'));
+                const end = new Date(endDateStr.replace(/-/g, '/'));
+                end.setDate(end.getDate() + 1);
+
+                const uid = 'qu-' + startDateStr + '-' + Math.random().toString(36).slice(2, 8);
+                const ics = [
+                    'BEGIN:VCALENDAR',
+                    'VERSION:2.0',
+                    'PRODID:-//QassimU//AcademicCalendar//AR',
+                    'BEGIN:VEVENT',
+                    'UID:' + uid,
+                    'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z',
+                    'DTSTART;VALUE=DATE:' + fmt(start),
+                    'DTEND;VALUE=DATE:' + fmt(end),
+                    'SUMMARY:' + title.replace(/[,;]/g, ' '),
+                    'DESCRIPTION:التقويم الأكاديمي - جامعة القصيم',
+                    'END:VEVENT',
+                    'END:VCALENDAR'
+                ].join('\r\n');
+
+                const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'حدث-جامعة-القصيم.ics';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        /* ═══ تهيئة الأحداث ═══ */
+        function initEventsAndClicks() {
+            try {
+                const today = new Date().getTime();
+                const rows = document.querySelectorAll('.table-section tbody tr:not(.toggle-row)');
+                let pastRows = [];
+                let upcomingCount = 0;
+
+                rows.forEach(row => {
+                    const dateString = row.getAttribute('data-date');
+                    if (dateString) {
+                        try {
+                            const eventEnd = new Date(dateString.replace(/-/g, "/") + " 23:59:59").getTime();
+
+                            const gregorianEl = row.querySelector('.gregorian-date');
+                            if (!gregorianEl) return;
+
+                            const startText = (gregorianEl.textContent || gregorianEl.innerText).trim();
+                            const parts = startText.replace(/[^\d/]/g, '').split('/');
+                            if (parts.length !== 3) return;
+
+                            const eventStart = new Date(`${parts[0]}/${parts[1]}/${parts[2]} 00:00:00`).getTime();
+
+                            const titleElement = row.querySelector('td[data-label="الحدث الأكاديمي"] .event-name span:last-child');
+                            const eventTitle = titleElement ? (titleElement.textContent || titleElement.innerText).trim() : '';
+
+                            if (today > eventEnd) {
+                                row.classList.add('past-event');
+                                row.classList.add('past-hidden');
+
+                                const titleCell = row.querySelector('td[data-label="الحدث الأكاديمي"]');
+                                if (titleCell && !titleCell.querySelector('.ended-badge')) {
+                                    const badge = document.createElement('span');
+                                    badge.className = 'ended-badge';
+                                    badge.innerText = 'انتهى';
+                                    titleCell.insertBefore(badge, titleCell.firstChild);
+                                }
+
+                                pastRows.push(row);
+                            } else {
+                                upcomingCount++;
+
+                                if (today >= eventStart && today <= eventEnd) {
+                                    row.classList.add('active-event');
+
+                                    const titleCell = row.querySelector('td[data-label="الحدث الأكاديمي"]');
+                                    if (titleCell && !titleCell.querySelector('.active-badge')) {
+                                        const badge = document.createElement('span');
+                                        badge.className = 'active-badge';
+                                        badge.innerText = 'جاري الآن';
+                                        titleCell.insertBefore(badge, titleCell.firstChild);
+                                    }
+                                }
+
+                                // زر إضافة للتقويم (للأحداث غير المنتهية فقط)
+                                if (!row.querySelector('.ics-btn')) {
+                                    const startAttr = row.getAttribute('data-start') || dateString;
+                                    const btn = document.createElement('button');
+                                    btn.className = 'ics-btn';
+                                    btn.title = 'أضف إلى تقويم جوالك';
+                                    btn.setAttribute('aria-label', 'أضف إلى التقويم');
+                                    btn.innerHTML = '<i class="fas fa-calendar-plus"></i>';
+                                    btn.addEventListener('click', function(e) {
+                                        e.stopPropagation();
+                                        downloadICS(eventTitle, startAttr, dateString);
+                                    });
+                                    row.appendChild(btn);
+                                }
+                            }
+
+                            row.addEventListener('click', function() {
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                                if (!eventTitle) return;
+
+                                const gDates = row.querySelectorAll('.gregorian-date');
+                                const hDates = row.querySelectorAll('.hijri-date');
+
+                                if (gDates.length === 0 || hDates.length === 0) return;
+
+                                const gDateLast = (gDates[gDates.length - 1].textContent || gDates[gDates.length - 1].innerText).trim();
+                                const hDateLast = (hDates[hDates.length - 1].textContent || hDates[hDates.length - 1].innerText).trim();
+                                const gDateFirst = (gDates[0].textContent || gDates[0].innerText).trim();
+                                const hDateFirst = (hDates[0].textContent || hDates[0].innerText).trim();
+
+                                if (today >= eventStart && today <= eventEnd) {
+                                    startCountdown(eventTitle, eventEnd, gDateLast, hDateLast, true);
+                                } else if (today > eventEnd) {
+                                    startCountdown(eventTitle, eventEnd, gDateLast, hDateLast, false);
+                                } else {
+                                    startCountdown(eventTitle, eventStart, gDateFirst, hDateFirst, false);
+                                }
+                            });
+                        } catch (innerRowErr) {
+                            console.error(innerRowErr);
+                        }
+                    }
+                });
+
+                const countEl = document.getElementById('events-count');
+                if (countEl) {
+                    countEl.innerText = upcomingCount + ' أحداث قادمة · ' + pastRows.length + ' منتهية';
+                }
+
+                if (pastRows.length > 0 && !document.getElementById('toggle-past-btn')) {
+                    const toggleTr = document.createElement('tr');
+                    toggleTr.className = 'toggle-row';
+                    toggleTr.innerHTML = `
+                        <td colspan="4">
+                            <button id="toggle-past-btn" class="past-toggle-btn">
+                                عرض الأحداث المنتهية (${pastRows.length}) <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </td>
+                    `;
+
+                    const tbody = document.querySelector('.table-section tbody');
+                    if (tbody && rows.length > 0) {
+                        tbody.insertBefore(toggleTr, rows[0]);
+                    }
+
+                    const togglePastBtn = document.getElementById('toggle-past-btn');
+                    if (togglePastBtn) {
+                        togglePastBtn.addEventListener('click', function() {
+                            const isHidden = pastRows[0].classList.contains('past-hidden');
+
+                            pastRows.forEach(r => {
+                                if (isHidden) {
+                                    r.classList.remove('past-hidden');
+                                    r.classList.add('visible');
+                                } else {
+                                    r.classList.add('past-hidden');
+                                }
+                            });
+
+                            this.innerHTML = isHidden
+                                ? `إخفاء الأحداث المنتهية <i class="fas fa-chevron-up"></i>`
+                                : `عرض الأحداث المنتهية (${pastRows.length}) <i class="fas fa-chevron-down"></i>`;
+                        });
+                    }
+                }
+
+                findAndStartNearestEvent('all');
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        /* ═══ ظهور تدريجي عند التمرير ═══ */
+        function initScrollReveal() {
+            try {
+                if (!('IntersectionObserver' in window)) {
+                    document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+                    return;
+                }
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.08 });
+
+                document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+            } catch (e) {
+                document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+                console.error(e);
+            }
+        }
+
+        calculateCurrentWeek();
+        initChipFilter();
+        initEventsAndClicks();
+        initScrollReveal();
+    </script>
+</body>
+</html>
