@@ -923,6 +923,50 @@
         }
         .wday.today .hj { color: var(--secondary-color); }
 
+        .weeks-ended-wrap {
+            display: none;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .weeks-ended-wrap.open { display: flex; }
+
+        .week-card.ended {
+            background: var(--past-bg);
+            border-color: var(--card-border);
+            opacity: 0.9;
+            box-shadow: none;
+        }
+        .week-card.ended .week-num {
+            background: var(--past-color);
+            color: #fff;
+            text-decoration: line-through;
+            text-decoration-thickness: 1.5px;
+        }
+        body.dark .week-card.ended .week-num { background: #43556b; }
+        .week-card.ended .exam-chip {
+            color: var(--past-color);
+            border-color: var(--rail-color);
+            text-decoration: line-through;
+        }
+        .week-card.ended .week-range,
+        .week-card.ended .week-range b { color: var(--past-color); }
+        .week-card.ended .wday {
+            background: transparent;
+            border-color: var(--card-border);
+        }
+        .week-card.ended .wday .dn,
+        .week-card.ended .wday .hj,
+        .week-card.ended .wday .gr { color: var(--past-color); }
+        .week-card.ended .wday .hj { text-decoration: line-through; text-decoration-thickness: 1.5px; }
+
+        .weeks-empty {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text-gray);
+        }
+        .weeks-empty i { font-size: 32px; margin-bottom: 12px; opacity: 0.45; display: block; }
+        .weeks-empty p { font-weight: 600; margin: 0; }
+
         .weeks-modal-foot {
             padding: 15px 20px;
             border-top: 1px solid var(--card-border);
@@ -1630,7 +1674,8 @@
 
         function initWeeksModal() {
             try {
-                const PDF_FILE = 'أسابيع الفصل الصيفي 475.pdf';
+                const PDF_FILE = 'weeks-475.pdf';
+                const PDF_SAVE_AS = 'أسابيع الفصل الصيفي 475.pdf';
                 const dayNames = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس'];
                 const hMonths = ['محرم', 'صفر', 'ربيع الأول', 'ربيع الثاني', 'جمادى الأولى', 'جمادى الآخرة', 'رجب', 'شعبان', 'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة'];
                 const gMonths = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
@@ -1655,7 +1700,7 @@
                 if (!overlay || !body || !trigger) return;
 
                 const dl = encodeURI(PDF_FILE);
-                if (dlBtn) { dlBtn.setAttribute('href', dl); dlBtn.setAttribute('download', PDF_FILE); }
+                if (dlBtn) { dlBtn.setAttribute('href', dl); dlBtn.setAttribute('download', PDF_SAVE_AS); }
 
                 const pad = n => String(n).padStart(2, '0');
                 const now = new Date();
@@ -1673,21 +1718,17 @@
                 const gLabel = g => { const p = g.split('-'); return parseInt(p[2], 10) + ' ' + gMonths[parseInt(p[1], 10) - 1]; };
                 const gCell = g => { const p = g.split('-'); return parseInt(p[2], 10) + '/' + parseInt(p[1], 10); };
 
-                let html = `
-                    <div class="weeks-legend">
-                        <span><i class="lg-current"></i>الأسبوع الحالي</span>
-                        <span><i class="lg-exam"></i>أسبوع الاختبارات</span>
-                    </div>
-                `;
-
-                data.forEach((week, wi) => {
+                function buildWeek(week, wi) {
                     const first = week[0];
                     const last = week[week.length - 1];
                     const hRange = hLabel(first[0]) + ' – ' + hLabel(last[0]) + ' ' + first[0].split('/')[0] + 'هـ';
                     const gRange = gLabel(first[1]) + ' – ' + gLabel(last[1]) + ' ' + first[1].split('-')[0] + 'م';
+                    const weekEnd = new Date(last[1].replace(/-/g, '/') + ' 23:59:59').getTime();
+                    const ended = nowT > weekEnd;
 
                     const classes = ['week-card', 'reveal'];
-                    if (wi === curWeek) classes.push('current');
+                    if (ended) classes.push('ended');
+                    if (wi === curWeek && !ended) classes.push('current');
                     if (wi === examWeek) classes.push('exam');
 
                     let daysHtml = '';
@@ -1703,11 +1744,14 @@
                         `;
                     });
 
-                    const head = wi === examWeek
+                    const label = wi === examWeek
                         ? `<span class="exam-chip"><i class="fas fa-file-pen"></i>الاختبارات النهائية</span>`
                         : `<span class="week-num"><i class="fas fa-calendar-week"></i>الأسبوع ${wi + 1}</span>`;
+                    const head = ended
+                        ? `<span class="ended-badge">انتهى</span>${label}`
+                        : label;
 
-                    html += `
+                    return { ended, html: `
                         <div class="${classes.join(' ')}" data-week="${wi}">
                             <div class="week-card-head">
                                 ${head}
@@ -1715,10 +1759,50 @@
                             </div>
                             <div class="week-days">${daysHtml}</div>
                         </div>
-                    `;
+                    ` };
+                }
+
+                let activeHtml = '';
+                let endedHtml = '';
+                let endedCount = 0;
+                data.forEach((week, wi) => {
+                    const built = buildWeek(week, wi);
+                    if (built.ended) { endedHtml += built.html; endedCount++; }
+                    else { activeHtml += built.html; }
                 });
 
+                let html = `
+                    <div class="weeks-legend">
+                        <span><i class="lg-current"></i>الأسبوع الحالي</span>
+                        <span><i class="lg-exam"></i>أسبوع الاختبارات</span>
+                    </div>
+                `;
+                html += activeHtml;
+                if (!activeHtml) {
+                    html += `<div class="weeks-empty"><i class="fas fa-flag-checkered"></i><p>انتهت جميع أسابيع الفصل</p></div>`;
+                }
+                if (endedCount > 0) {
+                    html += `
+                        <button id="weeks-ended-toggle" class="past-toggle-btn" type="button">
+                            عرض الأسابيع المنتهية (${endedCount}) <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div id="weeks-ended" class="weeks-ended-wrap">${endedHtml}</div>
+                    `;
+                }
+
                 body.innerHTML = html;
+
+                const endedToggle = document.getElementById('weeks-ended-toggle');
+                const endedWrap = document.getElementById('weeks-ended');
+                if (endedToggle && endedWrap) {
+                    endedToggle.addEventListener('click', function() {
+                        const open = endedWrap.classList.toggle('open');
+                        endedWrap.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+                        this.innerHTML = open
+                            ? `إخفاء الأسابيع المنتهية <i class="fas fa-chevron-up"></i>`
+                            : `عرض الأسابيع المنتهية (${endedCount}) <i class="fas fa-chevron-down"></i>`;
+                    });
+                }
 
                 let lastFocus = null;
                 function openModal() {
@@ -1728,7 +1812,7 @@
                     document.body.style.overflow = 'hidden';
                     body.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
                     if (closeBtn) closeBtn.focus();
-                    const cur = body.querySelector('.week-card.current') || body.querySelector('.week-card[data-week="' + (curWeek < 0 ? 0 : curWeek) + '"]');
+                    const cur = body.querySelector('.week-card.current') || body.querySelector('.week-card:not(.ended)');
                     if (cur) setTimeout(() => cur.scrollIntoView({ block: 'center', behavior: 'smooth' }), 250);
                 }
                 function closeModal() {
