@@ -732,6 +732,230 @@
 
             .ics-btn { bottom: 10px; left: 10px; }
         }
+
+        .weeks-trigger {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            margin-top: 14px;
+            padding: 9px 20px;
+            background: linear-gradient(150deg, rgba(255,255,255,0.14), rgba(255,255,255,0.04));
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.22);
+            backdrop-filter: blur(6px);
+            border-radius: 50px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease, box-shadow 0.3s ease;
+        }
+        .weeks-trigger i { color: var(--secondary-bright); font-size: 14px; }
+        .weeks-trigger:hover { transform: translateY(-2px); background: linear-gradient(150deg, rgba(255,255,255,0.22), rgba(255,255,255,0.06)); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+        .weeks-trigger:active { transform: scale(0.97); }
+        .weeks-trigger:focus-visible { outline: 2px solid var(--secondary-bright); outline-offset: 3px; }
+
+        .weeks-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(6, 14, 24, 0.55);
+            backdrop-filter: blur(5px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .weeks-overlay.open { opacity: 1; visibility: visible; }
+
+        .weeks-modal {
+            width: 94vw;
+            max-width: 760px;
+            max-height: 88vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 30px 70px rgba(6, 14, 24, 0.5);
+            transform: translateY(24px) scale(0.98);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .weeks-overlay.open .weeks-modal { transform: translateY(0) scale(1); }
+
+        .weeks-modal-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 20px 22px;
+            border-bottom: 1px solid var(--card-border);
+            background: linear-gradient(135deg, var(--header-grad-1), var(--header-grad-2));
+        }
+        .weeks-head-text h3 {
+            font-family: 'Alexandria', 'IBM Plex Sans Arabic', sans-serif;
+            color: #fff;
+            font-size: 19px;
+            font-weight: 700;
+            margin: 0;
+        }
+        .weeks-head-text p { color: rgba(255,255,255,0.7); font-size: 12px; font-weight: 600; margin: 4px 0 0 0; }
+        .weeks-close {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.22);
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.25s, transform 0.25s;
+        }
+        .weeks-close:hover { background: rgba(255,255,255,0.18); transform: rotate(90deg); }
+        .weeks-close:focus-visible { outline: 2px solid var(--secondary-bright); outline-offset: 2px; }
+
+        .weeks-modal-body {
+            padding: 18px 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .weeks-legend {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 2px;
+        }
+        .weeks-legend span {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-gray);
+        }
+        .weeks-legend i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        .lg-current { background: var(--active-color); }
+        .lg-exam { background: var(--exam-color); }
+
+        .week-card {
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            background: var(--card-bg);
+            padding: 15px 16px;
+            box-shadow: var(--shadow-soft);
+        }
+        .week-card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 13px;
+            flex-wrap: wrap;
+        }
+        .week-num {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--primary-deep);
+            color: #fff;
+            padding: 6px 15px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        body.dark .week-num { background: var(--secondary-color); color: #06211d; }
+        .week-num i { font-size: 11px; opacity: 0.85; }
+        .week-range { font-size: 12px; font-weight: 600; color: var(--text-gray); text-align: left; line-height: 1.7; }
+        .week-range b { color: var(--text-dark); font-weight: 700; }
+
+        .week-days { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; }
+        .wday {
+            background: var(--page-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 11px;
+            padding: 10px 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            text-align: center;
+        }
+        .wday .dn { font-size: 10.5px; font-weight: 700; color: var(--secondary-color); }
+        .wday .hj { font-size: 20px; font-weight: 700; color: var(--text-dark); line-height: 1; font-variant-numeric: tabular-nums; }
+        .wday .gr { font-size: 11px; font-weight: 600; color: var(--text-gray); direction: ltr; font-variant-numeric: tabular-nums; }
+
+        .week-card.current {
+            border: 2px solid var(--active-color);
+            box-shadow: 0 6px 22px rgba(230, 126, 34, 0.16);
+        }
+        .week-card.current .week-num { background: var(--active-color); color: #fff; }
+
+        .exam-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--secondary-soft);
+            color: var(--exam-text);
+            border: 1px solid rgba(231, 76, 60, 0.35);
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .week-card.exam { border-color: rgba(231, 76, 60, 0.4); }
+        .week-card.exam .wday { border-color: rgba(231, 76, 60, 0.28); }
+
+        .wday.today {
+            background: var(--secondary-soft);
+            border: 2px solid var(--secondary-color);
+        }
+        .wday.today .hj { color: var(--secondary-color); }
+
+        .weeks-modal-foot {
+            padding: 15px 20px;
+            border-top: 1px solid var(--card-border);
+        }
+        .weeks-download {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 14px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--secondary-color), var(--secondary-bright));
+            color: #06211d;
+            text-decoration: none;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 700;
+            transition: transform 0.25s, box-shadow 0.25s, filter 0.25s;
+        }
+        .weeks-download:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(23, 156, 142, 0.3); filter: brightness(1.05); }
+        .weeks-download:active { transform: scale(0.98); }
+
+        @media (max-width: 520px) {
+            .week-days { gap: 5px; }
+            .wday { padding: 9px 2px; border-radius: 9px; }
+            .wday .dn { font-size: 9.5px; }
+            .wday .hj { font-size: 18px; }
+            .wday .gr { font-size: 10px; }
+            .weeks-modal-head { padding: 16px 16px; }
+            .weeks-head-text h3 { font-size: 17px; }
+            .week-range { width: 100%; text-align: right; }
+        }
     </style>
 </head>
 <body>
@@ -742,6 +966,9 @@
             <div class="uni-eyebrow">جامعة القصيم</div>
             <h1 class="page-title">التقويم الأكاديمي</h1>
             <div class="current-week-badge" id="current-week-display"><i class="fas fa-calendar-week"></i><span>جاري حساب الأسبوع...</span></div>
+            <div>
+                <button class="weeks-trigger" id="weeks-trigger" type="button"><i class="fas fa-calendar-days"></i><span>عرض أسابيع الفصل كاملة</span></button>
+            </div>
             <div class="semester-progress" id="semester-progress" style="display:none;">
                 <div class="progress-labels">
                     <span>تقدم الفصل الصيفي</span>
@@ -869,6 +1096,22 @@
             </div>
         </section>
 
+    </div>
+
+    <div class="weeks-overlay" id="weeks-overlay" aria-hidden="true">
+        <div class="weeks-modal" role="dialog" aria-modal="true" aria-labelledby="weeks-modal-title">
+            <div class="weeks-modal-head">
+                <div class="weeks-head-text">
+                    <h3 id="weeks-modal-title">أسابيع الفصل الصيفي 475</h3>
+                    <p>تقويم الأسابيع الكامل · 1448هـ</p>
+                </div>
+                <button class="weeks-close" id="weeks-close" type="button" aria-label="إغلاق"><i class="fas fa-xmark"></i></button>
+            </div>
+            <div class="weeks-modal-body" id="weeks-modal-body"></div>
+            <div class="weeks-modal-foot">
+                <a class="weeks-download" id="weeks-download" href="#"><i class="fas fa-file-arrow-down"></i><span>تحميل ملف الـ PDF</span></a>
+            </div>
+        </div>
     </div>
 
     <footer class="page-footer">
@@ -1385,10 +1628,130 @@
             }
         }
 
+        function initWeeksModal() {
+            try {
+                const PDF_FILE = 'أسابيع الفصل الصيفي 475.pdf';
+                const dayNames = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس'];
+                const hMonths = ['محرم', 'صفر', 'ربيع الأول', 'ربيع الثاني', 'جمادى الأولى', 'جمادى الآخرة', 'رجب', 'شعبان', 'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة'];
+                const gMonths = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+
+                const data = [
+                    [['1448/01/13', '2026-06-28'], ['1448/01/14', '2026-06-29'], ['1448/01/15', '2026-06-30'], ['1448/01/16', '2026-07-01'], ['1448/01/17', '2026-07-02']],
+                    [['1448/01/20', '2026-07-05'], ['1448/01/21', '2026-07-06'], ['1448/01/22', '2026-07-07'], ['1448/01/23', '2026-07-08'], ['1448/01/24', '2026-07-09']],
+                    [['1448/01/27', '2026-07-12'], ['1448/01/28', '2026-07-13'], ['1448/01/29', '2026-07-14'], ['1448/02/01', '2026-07-15'], ['1448/02/02', '2026-07-16']],
+                    [['1448/02/05', '2026-07-19'], ['1448/02/06', '2026-07-20'], ['1448/02/07', '2026-07-21'], ['1448/02/08', '2026-07-22'], ['1448/02/09', '2026-07-23']],
+                    [['1448/02/12', '2026-07-26'], ['1448/02/13', '2026-07-27'], ['1448/02/14', '2026-07-28'], ['1448/02/15', '2026-07-29'], ['1448/02/16', '2026-07-30']],
+                    [['1448/02/19', '2026-08-02'], ['1448/02/20', '2026-08-03'], ['1448/02/21', '2026-08-04'], ['1448/02/22', '2026-08-05'], ['1448/02/23', '2026-08-06']],
+                    [['1448/02/26', '2026-08-09'], ['1448/02/27', '2026-08-10'], ['1448/02/28', '2026-08-11'], ['1448/02/29', '2026-08-12'], ['1448/02/30', '2026-08-13']],
+                    [['1448/03/03', '2026-08-16'], ['1448/03/04', '2026-08-17'], ['1448/03/05', '2026-08-18'], ['1448/03/06', '2026-08-19'], ['1448/03/07', '2026-08-20']]
+                ];
+                const examWeek = 7;
+
+                const overlay = document.getElementById('weeks-overlay');
+                const body = document.getElementById('weeks-modal-body');
+                const trigger = document.getElementById('weeks-trigger');
+                const closeBtn = document.getElementById('weeks-close');
+                const dlBtn = document.getElementById('weeks-download');
+                if (!overlay || !body || !trigger) return;
+
+                const dl = encodeURI(PDF_FILE);
+                if (dlBtn) { dlBtn.setAttribute('href', dl); dlBtn.setAttribute('download', PDF_FILE); }
+
+                const pad = n => String(n).padStart(2, '0');
+                const now = new Date();
+                const todayISO = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
+
+                const semStart = new Date('2026/06/28 00:00:00').getTime();
+                const semEnd = new Date('2026/08/20 23:59:59').getTime();
+                const nowT = now.getTime();
+                let curWeek = -1;
+                if (nowT >= semStart && nowT <= semEnd) {
+                    curWeek = Math.floor((nowT - semStart) / (1000 * 60 * 60 * 24) / 7);
+                }
+
+                const hLabel = h => { const p = h.split('/'); return parseInt(p[2], 10) + ' ' + hMonths[parseInt(p[1], 10) - 1]; };
+                const gLabel = g => { const p = g.split('-'); return parseInt(p[2], 10) + ' ' + gMonths[parseInt(p[1], 10) - 1]; };
+                const gCell = g => { const p = g.split('-'); return parseInt(p[2], 10) + '/' + parseInt(p[1], 10); };
+
+                let html = `
+                    <div class="weeks-legend">
+                        <span><i class="lg-current"></i>الأسبوع الحالي</span>
+                        <span><i class="lg-exam"></i>أسبوع الاختبارات</span>
+                    </div>
+                `;
+
+                data.forEach((week, wi) => {
+                    const first = week[0];
+                    const last = week[week.length - 1];
+                    const hRange = hLabel(first[0]) + ' – ' + hLabel(last[0]) + ' ' + first[0].split('/')[0] + 'هـ';
+                    const gRange = gLabel(first[1]) + ' – ' + gLabel(last[1]) + ' ' + first[1].split('-')[0] + 'م';
+
+                    const classes = ['week-card', 'reveal'];
+                    if (wi === curWeek) classes.push('current');
+                    if (wi === examWeek) classes.push('exam');
+
+                    let daysHtml = '';
+                    week.forEach((d, di) => {
+                        const hDay = parseInt(d[0].split('/')[2], 10);
+                        const isToday = d[1] === todayISO;
+                        daysHtml += `
+                            <div class="wday${isToday ? ' today' : ''}">
+                                <span class="dn">${dayNames[di]}</span>
+                                <span class="hj">${hDay}</span>
+                                <span class="gr">${gCell(d[1])}</span>
+                            </div>
+                        `;
+                    });
+
+                    const head = wi === examWeek
+                        ? `<span class="exam-chip"><i class="fas fa-file-pen"></i>الاختبارات النهائية</span>`
+                        : `<span class="week-num"><i class="fas fa-calendar-week"></i>الأسبوع ${wi + 1}</span>`;
+
+                    html += `
+                        <div class="${classes.join(' ')}" data-week="${wi}">
+                            <div class="week-card-head">
+                                ${head}
+                                <span class="week-range"><b>${hRange}</b><br>${gRange}</span>
+                            </div>
+                            <div class="week-days">${daysHtml}</div>
+                        </div>
+                    `;
+                });
+
+                body.innerHTML = html;
+
+                let lastFocus = null;
+                function openModal() {
+                    lastFocus = document.activeElement;
+                    overlay.classList.add('open');
+                    overlay.setAttribute('aria-hidden', 'false');
+                    document.body.style.overflow = 'hidden';
+                    body.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+                    if (closeBtn) closeBtn.focus();
+                    const cur = body.querySelector('.week-card.current') || body.querySelector('.week-card[data-week="' + (curWeek < 0 ? 0 : curWeek) + '"]');
+                    if (cur) setTimeout(() => cur.scrollIntoView({ block: 'center', behavior: 'smooth' }), 250);
+                }
+                function closeModal() {
+                    overlay.classList.remove('open');
+                    overlay.setAttribute('aria-hidden', 'true');
+                    document.body.style.overflow = '';
+                    if (lastFocus && lastFocus.focus) lastFocus.focus();
+                }
+
+                trigger.addEventListener('click', openModal);
+                if (closeBtn) closeBtn.addEventListener('click', closeModal);
+                overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+                document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
         calculateCurrentWeek();
         initChipFilter();
         initEventsAndClicks();
         initScrollReveal();
+        initWeeksModal();
     </script>
 </body>
 </html>
