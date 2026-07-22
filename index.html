@@ -426,6 +426,11 @@
 
         tr:not(.toggle-row):active { transform: scale(0.98); }
 
+        @media (min-width: 769px) {
+            tr:not(.toggle-row) { min-height: 94px; }
+            td:last-child { padding-left: 50px; }
+        }
+
         td {
             display: flex;
             flex-direction: column;
@@ -511,18 +516,20 @@
 
         .row-actions {
             position: absolute;
-            bottom: 10px;
-            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 12px;
             display: flex;
-            gap: 6px;
+            flex-direction: column;
+            gap: 5px;
             z-index: 2;
         }
 
         .ics-btn,
         .row-icon-btn {
-            width: 27px;
-            height: 27px;
-            border-radius: 8px;
+            width: 25px;
+            height: 25px;
+            border-radius: 7px;
             border: 1px solid var(--card-border);
             background: var(--page-bg);
             color: var(--text-gray);
@@ -738,7 +745,7 @@
 
             .active-event { border: 2px solid var(--active-color) !important; }
 
-            .row-actions { bottom: 12px; left: 10px; gap: 6px; }
+            .row-actions { top: auto; transform: none; bottom: 12px; left: 10px; flex-direction: row; gap: 6px; }
             .ics-btn, .row-icon-btn { width: 31px; height: 31px; font-size: 12px; }
             tr:not(.toggle-row) td:last-child { padding-left: 122px; }
         }
@@ -2288,7 +2295,7 @@
 
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
                 ctx.font = '500 28px "IBM Plex Sans Arabic"';
-                ctx.fillText('عدّاد أحداث التقويم الأكاديمي', W / 2, H - 148);
+                ctx.fillText('مؤقت أحداث التقويم الأكاديمي', W / 2, H - 148);
                 ctx.fillStyle = '#4dd8c8';
                 ctx.font = '600 30px "IBM Plex Sans Arabic"';
                 ctx.fillText('mutlaq001.github.io/QU', W / 2, H - 100);
