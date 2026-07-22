@@ -509,17 +509,24 @@
         .hijri-date { font-weight: 700; color: var(--text-dark); direction: ltr; }
         .gregorian-date { border-right: 1px solid var(--card-border); padding-right: 10px; color: var(--text-gray); direction: ltr; font-size: 14px; }
 
-        .ics-btn {
+        .row-actions {
             position: absolute;
-            bottom: 12px;
-            left: 12px;
-            width: 34px;
-            height: 34px;
-            border-radius: 10px;
+            bottom: 10px;
+            left: 10px;
+            display: flex;
+            gap: 6px;
+            z-index: 2;
+        }
+
+        .ics-btn,
+        .row-icon-btn {
+            width: 27px;
+            height: 27px;
+            border-radius: 8px;
             border: 1px solid var(--card-border);
             background: var(--page-bg);
             color: var(--text-gray);
-            font-size: 13px;
+            font-size: 11px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -528,7 +535,8 @@
             z-index: 2;
         }
 
-        .ics-btn:hover {
+        .ics-btn:hover,
+        .row-icon-btn:hover {
             background: var(--secondary-color);
             border-color: var(--secondary-color);
             color: #fff;
@@ -695,7 +703,7 @@
         }
 
         body.dark .day-chip { color: var(--secondary-bright); }
-        body.dark .ics-btn { background: #1d2a3b; }
+        body.dark .ics-btn, body.dark .row-icon-btn { background: #1d2a3b; }
 
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -730,7 +738,9 @@
 
             .active-event { border: 2px solid var(--active-color) !important; }
 
-            .ics-btn { bottom: 10px; left: 10px; }
+            .row-actions { bottom: 12px; left: 10px; gap: 6px; }
+            .ics-btn, .row-icon-btn { width: 31px; height: 31px; font-size: 12px; }
+            tr:not(.toggle-row) td:last-child { padding-left: 122px; }
         }
 
         .weeks-trigger {
@@ -1000,6 +1010,69 @@
             .weeks-head-text h3 { font-size: 17px; }
             .week-range { width: 100%; text-align: right; }
         }
+        .card-actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 1px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-dark);
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: var(--shadow-soft);
+            transition: all 0.3s ease;
+        }
+
+        .action-btn i { color: var(--secondary-color); }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--secondary-color);
+        }
+
+        .action-btn:disabled { opacity: 0.55; cursor: wait; transform: none; }
+
+        .share-toast {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--primary-deep);
+            color: #fff;
+            padding: 12px 26px;
+            border-radius: 50px;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.35s ease;
+            z-index: 9999;
+            white-space: nowrap;
+        }
+
+        .share-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        @keyframes linkedFlash {
+            0%, 100% { background-color: transparent; }
+            30% { background-color: var(--secondary-soft); }
+        }
+
+        tr.linked-flash td { animation: linkedFlash 2.4s ease 1; }
     </style>
 </head>
 <body>
@@ -1040,6 +1113,10 @@
                     <div class="timer-box"><span class="timer-label" id="days-label">يوم</span><span class="timer-num" id="days">00</span></div>
                     <div class="timer-box"><span class="timer-label" id="hours-label">ساعة</span><span class="timer-num" id="hours">00</span></div>
                     <div class="timer-box"><span class="timer-label" id="minutes-label">دقيقة</span><span class="timer-num" id="minutes">00</span></div>
+                </div>
+                <div class="card-actions">
+                    <button class="action-btn" id="share-image-btn" type="button"><i class="fas fa-image"></i><span>مشاركة كصورة</span></button>
+                    <button class="action-btn" id="copy-link-btn" type="button"><i class="fas fa-link"></i><span>نسخ رابط الحدث</span></button>
                 </div>
             </div>
         </section>
@@ -1171,6 +1248,15 @@
 
     <script>
         let countdownInterval = null;
+        let currentEventKey = null;
+
+        function makeEventKey(dateStr, title) {
+            let h = 0;
+            for (let i = 0; i < title.length; i++) {
+                h = (h * 31 + title.charCodeAt(i)) >>> 0;
+            }
+            return dateStr + '-' + h.toString(36);
+        }
 
         (function initTheme() {
             try {
@@ -1388,6 +1474,8 @@
                         const gDateFirst = (gDates[0].textContent || gDates[0].innerText).trim();
                         const hDateFirst = (hDates[0].textContent || hDates[0].innerText).trim();
 
+                        currentEventKey = makeEventKey(dateString, title);
+
                         if (today >= eventStart && today <= eventEnd) {
                             startCountdown(title, eventEnd, gDateLast, hDateLast, true);
                             found = true;
@@ -1558,19 +1646,49 @@
                                     }
                                 }
 
-                                if (!row.querySelector('.ics-btn')) {
+                            }
+
+                            if (!row.querySelector('.row-actions')) {
+                                const actions = document.createElement('div');
+                                actions.className = 'row-actions';
+
+                                if (today <= eventEnd) {
                                     const startAttr = row.getAttribute('data-start') || dateString;
-                                    const btn = document.createElement('button');
-                                    btn.className = 'ics-btn';
-                                    btn.title = 'أضف إلى تقويم جوالك';
-                                    btn.setAttribute('aria-label', 'أضف إلى التقويم');
-                                    btn.innerHTML = '<i class="fas fa-calendar-plus"></i>';
-                                    btn.addEventListener('click', function(e) {
+                                    const icsBtn = document.createElement('button');
+                                    icsBtn.className = 'ics-btn';
+                                    icsBtn.title = 'أضف إلى تقويم جوالك';
+                                    icsBtn.setAttribute('aria-label', 'أضف إلى التقويم');
+                                    icsBtn.innerHTML = '<i class="fas fa-calendar-plus"></i>';
+                                    icsBtn.addEventListener('click', function(e) {
                                         e.stopPropagation();
                                         downloadICS(eventTitle, startAttr, dateString);
                                     });
-                                    row.appendChild(btn);
+                                    actions.appendChild(icsBtn);
                                 }
+
+                                const shareRowBtn = document.createElement('button');
+                                shareRowBtn.className = 'row-icon-btn';
+                                shareRowBtn.title = 'مشاركة الحدث كصورة';
+                                shareRowBtn.setAttribute('aria-label', 'مشاركة الحدث كصورة');
+                                shareRowBtn.innerHTML = '<i class="fas fa-image"></i>';
+                                shareRowBtn.addEventListener('click', function(e) {
+                                    e.stopPropagation();
+                                    shareEventImage(buildRowSnapshot(row), shareRowBtn);
+                                });
+                                actions.appendChild(shareRowBtn);
+
+                                const linkRowBtn = document.createElement('button');
+                                linkRowBtn.className = 'row-icon-btn';
+                                linkRowBtn.title = 'نسخ رابط الحدث';
+                                linkRowBtn.setAttribute('aria-label', 'نسخ رابط الحدث');
+                                linkRowBtn.innerHTML = '<i class="fas fa-link"></i>';
+                                linkRowBtn.addEventListener('click', function(e) {
+                                    e.stopPropagation();
+                                    copyEventLink(makeEventKey(dateString, eventTitle));
+                                });
+                                actions.appendChild(linkRowBtn);
+
+                                row.appendChild(actions);
                             }
 
                             row.addEventListener('click', function() {
@@ -1595,6 +1713,9 @@
                                 } else {
                                     startCountdown(eventTitle, eventStart, gDateFirst, hDateFirst, false);
                                 }
+
+                                currentEventKey = makeEventKey(dateString, eventTitle);
+                                try { history.replaceState(null, '', location.pathname + '?event=' + currentEventKey); } catch (linkErr) {}
                             });
                         } catch (innerRowErr) {
                             console.error(innerRowErr);
@@ -1831,11 +1952,396 @@
             }
         }
 
+        function showToast(msg) {
+            try {
+                let toast = document.getElementById('share-toast');
+                if (!toast) {
+                    toast = document.createElement('div');
+                    toast.id = 'share-toast';
+                    toast.className = 'share-toast';
+                    document.body.appendChild(toast);
+                }
+                toast.innerText = msg;
+                toast.classList.add('show');
+                clearTimeout(toast._hideTimer);
+                toast._hideTimer = setTimeout(() => toast.classList.remove('show'), 2400);
+            } catch (e) { console.error(e); }
+        }
+
+        function buildEventLink(key) {
+            return location.origin + location.pathname + '?event=' + key;
+        }
+
+        function copyEventLink(key) {
+            if (!key) { showToast('اختر حدثًا من الجدول أولًا'); return; }
+            const link = buildEventLink(key);
+            const done = () => showToast('تم نسخ رابط الحدث ✓');
+            const fallback = () => {
+                try {
+                    const ta = document.createElement('textarea');
+                    ta.value = link;
+                    ta.style.position = 'fixed';
+                    ta.style.opacity = '0';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    done();
+                } catch (e) { showToast('تعذّر النسخ'); }
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(link).then(done).catch(fallback);
+            } else {
+                fallback();
+            }
+        }
+
+        function applyEventLink() {
+            try {
+                const params = new URLSearchParams(location.search);
+                let key = params.get('event');
+                if (!key && location.hash.indexOf('event=') !== -1) {
+                    key = decodeURIComponent(location.hash.split('event=')[1]);
+                }
+                if (!key) return;
+
+                const rows = document.querySelectorAll('.table-section tbody tr:not(.toggle-row)');
+                for (const row of rows) {
+                    const d = row.getAttribute('data-date');
+                    const tEl = row.querySelector('td[data-label="الحدث الأكاديمي"] .event-name span:last-child');
+                    if (!d || !tEl) continue;
+                    const t = (tEl.textContent || tEl.innerText).trim();
+                    if (makeEventKey(d, t) !== key) continue;
+
+                    if (row.classList.contains('past-hidden')) {
+                        const toggleBtn = document.getElementById('toggle-past-btn');
+                        if (toggleBtn) toggleBtn.click();
+                    }
+                    row.click();
+                    row.classList.add('linked-flash');
+                    setTimeout(() => row.classList.remove('linked-flash'), 2600);
+                    break;
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function drawRoundedRect(ctx, x, y, w, h, r) {
+            ctx.beginPath();
+            if (ctx.roundRect) {
+                ctx.roundRect(x, y, w, h, r);
+            } else {
+                ctx.moveTo(x + r, y);
+                ctx.arcTo(x + w, y, x + w, y + h, r);
+                ctx.arcTo(x + w, y + h, x, y + h, r);
+                ctx.arcTo(x, y + h, x, y, r);
+                ctx.arcTo(x, y, x + w, y, r);
+                ctx.closePath();
+            }
+        }
+
+        function wrapCanvasText(ctx, text, maxWidth) {
+            const words = text.split(/\s+/);
+            const lines = [];
+            let line = '';
+            for (const w of words) {
+                const test = line ? line + ' ' + w : w;
+                if (ctx.measureText(test).width > maxWidth && line) {
+                    lines.push(line);
+                    line = w;
+                } else {
+                    line = test;
+                }
+            }
+            if (line) lines.push(line);
+            return lines;
+        }
+
+        function splitDates(gDate, hDate) {
+            const months = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+            const hMonths = ["محرم", "صفر", "ربيع الأول", "ربيع الثاني", "جمادى الأول", "جمادى الآخرة", "رجب", "شعبان", "رمضان", "شوال", "ذو القعدة", "ذو الحجة"];
+            const g = gDate.split('/');
+            const h = hDate.split('/');
+            return {
+                gDay: g.length === 3 ? g[2].replace('م', '') : '--',
+                gText: g.length === 3 ? months[parseInt(g[1], 10) - 1] + ' ' + g[0] : gDate,
+                hDay: h.length === 3 ? h[2].replace('هـ', '') : '--',
+                hText: h.length === 3 ? hMonths[parseInt(h[1], 10) - 1] + ' ' + h[0] : hDate
+            };
+        }
+
+        function buildCardSnapshot() {
+            const statusEl = document.getElementById('timer-status');
+            const isActive = (statusEl.style.color || '').indexOf('active') !== -1;
+            return {
+                title: (document.getElementById('event-title').textContent || '').trim(),
+                status: (statusEl.textContent || '').trim(),
+                statusColor: isActive ? '#f39c4a' : '#4dd8c8',
+                key: currentEventKey,
+                vals: {
+                    days: document.getElementById('days').textContent,
+                    hours: document.getElementById('hours').textContent,
+                    minutes: document.getElementById('minutes').textContent,
+                    daysLabel: document.getElementById('days-label').textContent,
+                    hoursLabel: document.getElementById('hours-label').textContent,
+                    minutesLabel: document.getElementById('minutes-label').textContent,
+                    gDay: document.getElementById('g-day').textContent,
+                    gText: document.getElementById('g-text').textContent,
+                    hDay: document.getElementById('h-day').textContent,
+                    hText: document.getElementById('h-text').textContent
+                }
+            };
+        }
+
+        function buildRowSnapshot(row) {
+            const dateString = row.getAttribute('data-date');
+            const titleElement = row.querySelector('td[data-label="الحدث الأكاديمي"] .event-name span:last-child');
+            const title = titleElement ? (titleElement.textContent || titleElement.innerText).trim() : '';
+            const gDates = row.querySelectorAll('.gregorian-date');
+            const hDates = row.querySelectorAll('.hijri-date');
+            const gFirst = (gDates[0].textContent || gDates[0].innerText).trim();
+            const gLast = (gDates[gDates.length - 1].textContent || gDates[gDates.length - 1].innerText).trim();
+            const hFirst = (hDates[0].textContent || hDates[0].innerText).trim();
+            const hLast = (hDates[hDates.length - 1].textContent || hDates[hDates.length - 1].innerText).trim();
+            const eventEnd = new Date(dateString.replace(/-/g, '/') + ' 23:59:59').getTime();
+            const parts = gFirst.replace(/[^\d/]/g, '').split('/');
+            const eventStart = new Date(parts[0] + '/' + parts[1] + '/' + parts[2] + ' 00:00:00').getTime();
+            const now = Date.now();
+            let target, gDate, hDate, status, statusColor;
+            if (now >= eventStart && now <= eventEnd) {
+                target = eventEnd; gDate = gLast; hDate = hLast;
+                status = 'الوقت المتبقي لانتهاء الحدث:'; statusColor = '#f39c4a';
+            } else if (now > eventEnd) {
+                target = now; gDate = gLast; hDate = hLast;
+                status = 'انتهى هذا الحدث'; statusColor = '#a0aab5';
+            } else {
+                target = eventStart; gDate = gFirst; hDate = hFirst;
+                status = 'الوقت المتبقي لبداية الحدث:'; statusColor = '#4dd8c8';
+            }
+            const dist = Math.max(0, target - now);
+            const days = Math.floor(dist / 86400000);
+            const hours = Math.floor((dist % 86400000) / 3600000);
+            const minutes = Math.floor((dist % 3600000) / 60000);
+            const pad = n => (n < 10 ? '0' + n : String(n));
+            const d = splitDates(gDate, hDate);
+            return {
+                title: title,
+                status: status,
+                statusColor: statusColor,
+                key: makeEventKey(dateString, title),
+                vals: {
+                    days: days < 10 && days > 0 ? '0' + days : String(days),
+                    hours: pad(hours),
+                    minutes: pad(minutes),
+                    daysLabel: getArabicPlural(days, 'day'),
+                    hoursLabel: getArabicPlural(hours, 'hour'),
+                    minutesLabel: getArabicPlural(minutes, 'minute'),
+                    gDay: d.gDay, gText: d.gText, hDay: d.hDay, hText: d.hText
+                }
+            };
+        }
+
+        async function shareEventImage(snapshot, btn) {
+            const icon = btn ? btn.querySelector('i') : null;
+            const prevIcon = icon ? icon.className : '';
+            try {
+                if (btn) btn.disabled = true;
+                if (icon) icon.className = 'fas fa-spinner fa-spin';
+
+                const data = snapshot || buildCardSnapshot();
+                const title = data.title;
+                const status = data.status;
+                const statusColor = data.statusColor;
+                const shareKey = data.key;
+                const vals = data.vals;
+
+                try {
+                    await Promise.all([
+                        document.fonts.load('800 58px Alexandria'),
+                        document.fonts.load('700 92px "IBM Plex Sans Arabic"'),
+                        document.fonts.load('600 36px "IBM Plex Sans Arabic"'),
+                        document.fonts.ready
+                    ]);
+                } catch (fontErr) {}
+
+                const W = 1080, H = 1350;
+                const canvas = document.createElement('canvas');
+                canvas.width = W;
+                canvas.height = H;
+                const ctx = canvas.getContext('2d');
+                ctx.direction = 'rtl';
+                ctx.textAlign = 'center';
+
+                const bg = ctx.createLinearGradient(0, 0, W, H);
+                bg.addColorStop(0, '#0f2b48');
+                bg.addColorStop(0.55, '#14385d');
+                bg.addColorStop(1, '#11554f');
+                ctx.fillStyle = bg;
+                ctx.fillRect(0, 0, W, H);
+
+                const glow1 = ctx.createRadialGradient(W - 120, 140, 0, W - 120, 140, 480);
+                glow1.addColorStop(0, 'rgba(77, 216, 200, 0.14)');
+                glow1.addColorStop(1, 'rgba(77, 216, 200, 0)');
+                ctx.fillStyle = glow1;
+                ctx.fillRect(0, 0, W, H);
+
+                const glow2 = ctx.createRadialGradient(100, H - 160, 0, 100, H - 160, 520);
+                glow2.addColorStop(0, 'rgba(52, 152, 219, 0.12)');
+                glow2.addColorStop(1, 'rgba(52, 152, 219, 0)');
+                ctx.fillStyle = glow2;
+                ctx.fillRect(0, 0, W, H);
+
+                const drawFrieze = (cy) => {
+                    ctx.save();
+                    ctx.fillStyle = 'rgba(77, 216, 200, 0.35)';
+                    for (let x = 80; x <= W - 80; x += 36) {
+                        ctx.save();
+                        ctx.translate(x, cy);
+                        ctx.rotate(Math.PI / 4);
+                        ctx.fillRect(-5, -5, 10, 10);
+                        ctx.restore();
+                    }
+                    ctx.restore();
+                };
+                drawFrieze(64);
+                drawFrieze(H - 64);
+
+                ctx.font = '600 30px "IBM Plex Sans Arabic"';
+                const badgeText = 'التقويم الأكاديمي · جامعة القصيم';
+                const badgeW = ctx.measureText(badgeText).width + 70;
+                drawRoundedRect(ctx, (W - badgeW) / 2, 138, badgeW, 64, 32);
+                ctx.fillStyle = 'rgba(77, 216, 200, 0.08)';
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(77, 216, 200, 0.55)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.fillStyle = '#4dd8c8';
+                ctx.fillText(badgeText, W / 2, 181);
+
+                let titleFont = '800 56px Alexandria';
+                let lineHeight = 84;
+                ctx.font = titleFont;
+                let lines = wrapCanvasText(ctx, title, 880);
+                if (lines.length > 3) {
+                    titleFont = '800 46px Alexandria';
+                    lineHeight = 70;
+                    ctx.font = titleFont;
+                    lines = wrapCanvasText(ctx, title, 900);
+                }
+                ctx.fillStyle = '#ffffff';
+                let y = 300;
+                for (const line of lines) {
+                    ctx.fillText(line, W / 2, y);
+                    y += lineHeight;
+                }
+                y -= lineHeight;
+
+                y += 92;
+                ctx.font = '600 36px "IBM Plex Sans Arabic"';
+                ctx.fillStyle = statusColor;
+                ctx.fillText(status, W / 2, y);
+
+                const boxTop = y + 52;
+                const boxW = 260, boxH = 220, gap = 35;
+                const startX = (W - (boxW * 3 + gap * 2)) / 2;
+                const boxes = [
+                    { num: vals.minutes, label: vals.minutesLabel },
+                    { num: vals.hours, label: vals.hoursLabel },
+                    { num: vals.days, label: vals.daysLabel }
+                ];
+                boxes.forEach((b, i) => {
+                    const x = startX + i * (boxW + gap);
+                    drawRoundedRect(ctx, x, boxTop, boxW, boxH, 26);
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+                    ctx.fill();
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.28)';
+                    ctx.lineWidth = 2.5;
+                    ctx.stroke();
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = '700 92px "IBM Plex Sans Arabic"';
+                    ctx.fillText(b.num, x + boxW / 2, boxTop + 118);
+                    ctx.fillStyle = '#a9bccf';
+                    ctx.font = '500 32px "IBM Plex Sans Arabic"';
+                    ctx.fillText(b.label, x + boxW / 2, boxTop + 178);
+                });
+
+                const pillTop = boxTop + boxH + 60;
+                const pillW = 380, pillH = 150, pillGap = 40;
+                const pillStart = (W - (pillW * 2 + pillGap)) / 2;
+
+                drawRoundedRect(ctx, pillStart + pillW + pillGap, pillTop, pillW, pillH, 24);
+                ctx.fillStyle = '#cfdcec';
+                ctx.fill();
+                ctx.fillStyle = '#12293f';
+                ctx.font = '700 54px "IBM Plex Sans Arabic"';
+                ctx.fillText(vals.gDay, pillStart + pillW + pillGap + pillW / 2, pillTop + 68);
+                ctx.font = '600 28px "IBM Plex Sans Arabic"';
+                ctx.fillText(vals.gText, pillStart + pillW + pillGap + pillW / 2, pillTop + 116);
+
+                drawRoundedRect(ctx, pillStart, pillTop, pillW, pillH, 24);
+                ctx.fillStyle = '#2fc4b4';
+                ctx.fill();
+                ctx.fillStyle = '#04241f';
+                ctx.font = '700 54px "IBM Plex Sans Arabic"';
+                ctx.fillText(vals.hDay, pillStart + pillW / 2, pillTop + 68);
+                ctx.font = '600 28px "IBM Plex Sans Arabic"';
+                ctx.fillText(vals.hText, pillStart + pillW / 2, pillTop + 116);
+
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                ctx.font = '500 28px "IBM Plex Sans Arabic"';
+                ctx.fillText('عدّاد أحداث التقويم الأكاديمي', W / 2, H - 148);
+                ctx.fillStyle = '#4dd8c8';
+                ctx.font = '600 30px "IBM Plex Sans Arabic"';
+                ctx.fillText('mutlaq001.github.io/QU', W / 2, H - 100);
+
+                const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+                if (!blob) { showToast('تعذّر إنشاء الصورة'); return; }
+
+                const file = new File([blob], 'qu-event.png', { type: 'image/png' });
+                const shareText = shareKey ? title + '\n' + buildEventLink(shareKey) : title;
+
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({ files: [file], title: title, text: shareText });
+                        return;
+                    } catch (shareErr) {
+                        if (shareErr && shareErr.name === 'AbortError') return;
+                    }
+                }
+
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'حدث-جامعة-القصيم.png';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(url), 1500);
+                showToast('تم حفظ الصورة ✓');
+            } catch (e) {
+                console.error(e);
+                showToast('تعذّر إنشاء الصورة');
+            } finally {
+                if (icon) icon.className = prevIcon || 'fas fa-image';
+                if (btn) btn.disabled = false;
+            }
+        }
+
+        function initShareActions() {
+            try {
+                const shareBtn = document.getElementById('share-image-btn');
+                const copyBtn = document.getElementById('copy-link-btn');
+                if (shareBtn) shareBtn.addEventListener('click', function() { shareEventImage(null, shareBtn); });
+                if (copyBtn) copyBtn.addEventListener('click', function() { copyEventLink(currentEventKey); });
+            } catch (e) { console.error(e); }
+        }
+
         calculateCurrentWeek();
         initChipFilter();
         initEventsAndClicks();
         initScrollReveal();
         initWeeksModal();
+        initShareActions();
+        applyEventLink();
     </script>
 </body>
 </html>
