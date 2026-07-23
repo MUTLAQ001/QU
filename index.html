@@ -322,8 +322,12 @@
             background-color: transparent;
         }
 
-        .timer-label { font-size: 16px; color: var(--text-dark); font-weight: 600; }
+        .timer-label { font-size: 16px; color: var(--text-dark); font-weight: 600; transition: font-size 0.25s ease; }
         .timer-num { font-size: 26px; font-weight: 700; color: var(--text-dark); line-height: 1; font-variant-numeric: tabular-nums; }
+
+        .timer-box.word-only { padding: 5px 18px; }
+        .timer-box.word-only .timer-label { font-size: 21px; font-weight: 700; }
+        .timer-box.word-only .timer-num { display: none; }
 
         .fade-in { animation: fadeIn 0.7s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
@@ -519,38 +523,160 @@
             top: 50%;
             transform: translateY(-50%);
             left: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            z-index: 2;
+            z-index: 4;
         }
 
-        .ics-btn,
-        .row-icon-btn {
-            width: 25px;
-            height: 25px;
-            border-radius: 7px;
-            border: 1px solid var(--card-border);
-            background: var(--page-bg);
+        .row-toggle-btn {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            background: transparent;
             color: var(--text-gray);
-            font-size: 11px;
             cursor: pointer;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: all 0.25s;
-            z-index: 2;
+            gap: 3px;
+            position: relative;
+            z-index: 6;
+            transition: background 0.22s ease, border-color 0.22s ease,
+                        color 0.22s ease, box-shadow 0.22s ease, transform 0.16s ease;
         }
 
-        .ics-btn:hover,
-        .row-icon-btn:hover {
-            background: var(--secondary-color);
-            border-color: var(--secondary-color);
+        .row-toggle-btn .kdot {
+            width: 3.5px;
+            height: 3.5px;
+            border-radius: 50%;
+            background: currentColor;
+            transition: transform 0.3s cubic-bezier(0.34, 1.45, 0.64, 1);
+        }
+
+        .row-toggle-btn:hover {
+            background: var(--page-bg);
+            border-color: var(--card-border);
+            color: var(--primary-color);
+        }
+        .row-toggle-btn:active { transform: scale(0.93); }
+        .row-toggle-btn:focus-visible {
+            outline: 2px solid var(--secondary-color);
+            outline-offset: 2px;
+        }
+
+        .row-actions.open .row-toggle-btn {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
             color: #fff;
-            transform: scale(1.1);
+            box-shadow: 0 5px 14px rgba(15, 43, 72, 0.28);
+        }
+        .row-actions.open .row-toggle-btn .kdot:nth-child(1) { transform: translateY(6.5px) scale(0.85); }
+        .row-actions.open .row-toggle-btn .kdot:nth-child(2) { transform: scale(1.45); }
+        .row-actions.open .row-toggle-btn .kdot:nth-child(3) { transform: translateY(-6.5px) scale(0.85); }
+
+        .row-actions-menu {
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 0;
+            min-width: 212px;
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            box-shadow: 0 1px 3px rgba(15, 43, 72, 0.07),
+                        0 20px 42px -14px rgba(15, 43, 72, 0.32);
+            transform-origin: bottom left;
+            transform: translateY(6px) scale(0.96);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.18s ease, transform 0.24s cubic-bezier(0.34, 1.35, 0.64, 1),
+                        visibility 0.24s;
         }
 
-        .past-event .ics-btn { display: none; }
+        .row-actions.open .row-actions-menu {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: none;
+        }
+
+        .row-actions.drop-down .row-actions-menu {
+            bottom: auto;
+            top: calc(100% + 10px);
+            transform-origin: top left;
+            transform: translateY(-6px) scale(0.96);
+        }
+        .row-actions.drop-down.open .row-actions-menu { transform: none; }
+
+        .row-menu-title {
+            font-size: 10.5px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            color: var(--text-gray);
+            padding: 8px 10px 5px;
+        }
+
+        .row-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            width: 100%;
+            padding: 8px 10px;
+            border: 0;
+            background: transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text-dark);
+            text-align: right;
+            transition: background 0.18s ease, color 0.18s ease;
+        }
+
+        .row-menu-item .rmi-ico {
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: transform 0.2s ease, background 0.18s ease, color 0.18s ease;
+        }
+        .row-menu-item .rmi-label { flex: 1; }
+
+        .row-menu-item:hover { background: var(--page-bg); }
+        .row-menu-item:hover .rmi-ico { transform: scale(1.08); }
+        .row-menu-item:focus-visible {
+            outline: 2px solid var(--secondary-color);
+            outline-offset: -2px;
+        }
+        .row-menu-item:disabled { opacity: 0.55; cursor: default; }
+
+        .row-menu-item.act-cal .rmi-ico { background: var(--secondary-soft); color: var(--secondary-color); }
+        .row-menu-item.act-img .rmi-ico { background: rgba(52, 152, 219, 0.13); color: var(--academic-color); }
+        .row-menu-item.act-link .rmi-ico { background: rgba(125, 138, 151, 0.14); color: var(--text-gray); }
+
+        .row-actions.open .row-menu-item { animation: rowItemIn 0.26s ease both; }
+        .row-actions.open .row-menu-item:nth-of-type(1) { animation-delay: 0.03s; }
+        .row-actions.open .row-menu-item:nth-of-type(2) { animation-delay: 0.07s; }
+        .row-actions.open .row-menu-item:nth-of-type(3) { animation-delay: 0.11s; }
+
+        @keyframes rowItemIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: none; }
+        }
+
+        tr.actions-open { overflow: visible; z-index: 6; }
+
+        .past-event .row-menu-item.act-cal { display: none; }
 
         .past-event {
             background-color: var(--past-bg) !important;
@@ -682,10 +808,11 @@
         .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s ease; }
         .reveal.visible { opacity: 1; transform: translateY(0); }
 
-        body.dark .date-box.gregorian { background-color: #2e4665; color: #dbe7f5; }
-        body.dark .date-box.hijri { background-color: #0f4f48; color: #d2f3ee; }
+
 
         body.dark .timer-box { border-color: #46617f; }
+        body.dark .date-box.gregorian { background-color: #2e4665; color: #dbe7f5; }
+        body.dark .date-box.hijri { background-color: #0f4f48; color: #d2f3ee; }
 
         body.dark .past-event.holiday-row,
         body.dark .past-event.academic-row,
@@ -710,7 +837,17 @@
         }
 
         body.dark .day-chip { color: var(--secondary-bright); }
-        body.dark .ics-btn, body.dark .row-icon-btn { background: #1d2a3b; }
+        body.dark .row-toggle-btn:hover { background: #1d2a3b; }
+        body.dark .row-menu-item:hover { background: rgba(255, 255, 255, 0.06); }
+        body.dark .row-actions-menu {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 22px 46px -14px rgba(0, 0, 0, 0.6);
+        }
+        body.dark .row-actions.open .row-toggle-btn {
+            background: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: #06232a;
+            box-shadow: 0 5px 14px rgba(47, 196, 180, 0.28);
+        }
 
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -745,9 +882,17 @@
 
             .active-event { border: 2px solid var(--active-color) !important; }
 
-            .row-actions { top: auto; transform: none; bottom: 12px; left: 10px; flex-direction: row; gap: 6px; }
-            .ics-btn, .row-icon-btn { width: 31px; height: 31px; font-size: 12px; }
-            tr:not(.toggle-row) td:last-child { padding-left: 122px; }
+            .row-actions { top: auto; transform: none; bottom: 12px; left: 10px; }
+            .row-toggle-btn {
+                width: 36px;
+                height: 36px;
+                background: var(--page-bg);
+                border-color: var(--card-border);
+            }
+            .row-actions-menu { min-width: 224px; }
+            .row-menu-item { padding: 10px; font-size: 14px; }
+            .row-menu-item .rmi-ico { width: 30px; height: 30px; font-size: 13px; }
+            tr:not(.toggle-row) td:last-child { padding-left: 62px; }
         }
 
         .weeks-trigger {
@@ -1017,40 +1162,141 @@
             .weeks-head-text h3 { font-size: 17px; }
             .week-range { width: 100%; text-align: right; }
         }
-        .card-actions {
+        .img-opts-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 2400;
             display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .action-btn {
-            display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            border-radius: 50px;
-            border: 1px solid var(--card-border);
+            justify-content: center;
+            padding: 20px;
+            background: rgba(6, 14, 24, 0.55);
+            backdrop-filter: blur(5px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .img-opts-overlay.open { opacity: 1; visibility: visible; }
+
+        .img-opts-sheet {
+            width: 94vw;
+            max-width: 460px;
             background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 30px 70px rgba(6, 14, 24, 0.5);
+            transform: translateY(24px) scale(0.98);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .img-opts-overlay.open .img-opts-sheet { transform: translateY(0) scale(1); }
+
+        .img-opts-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 18px 20px;
+            background: linear-gradient(135deg, var(--header-grad-1), var(--header-grad-2));
+        }
+        .img-opts-head h3 {
+            font-family: 'Alexandria', 'IBM Plex Sans Arabic', sans-serif;
+            color: #fff;
+            font-size: 17px;
+            font-weight: 700;
+            margin: 0;
+        }
+        .img-opts-head p { color: rgba(255,255,255,0.7); font-size: 12px; font-weight: 600; margin: 5px 0 0 0; }
+        .img-opts-close {
+            width: 38px;
+            height: 38px;
+            min-width: 38px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.22);
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.25s, transform 0.25s;
+        }
+        .img-opts-close:hover { background: rgba(255,255,255,0.18); transform: rotate(90deg); }
+
+        .img-opts-body { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 10px; }
+
+        .img-opt {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            text-align: right;
+            padding: 12px 14px;
+            border-radius: 16px;
+            border: 1.5px solid var(--card-border);
+            background: transparent;
             color: var(--text-dark);
             font-family: 'IBM Plex Sans Arabic', sans-serif;
-            font-size: 0.88rem;
-            font-weight: 600;
             cursor: pointer;
-            box-shadow: var(--shadow-soft);
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
         }
+        .img-opt:hover { border-color: var(--secondary-color); transform: translateY(-2px); }
+        .img-opt.selected { border-color: var(--secondary-color); background: var(--secondary-soft); }
 
-        .action-btn i { color: var(--secondary-color); }
-
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-hover);
-            border-color: var(--secondary-color);
+        .img-opt-icon {
+            width: 38px;
+            height: 38px;
+            min-width: 38px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--secondary-soft);
+            color: var(--secondary-color);
+            font-size: 14px;
+            transition: all 0.25s ease;
         }
+        .img-opt.selected .img-opt-icon { background: var(--secondary-color); color: #fff; }
 
-        .action-btn:disabled { opacity: 0.55; cursor: wait; transform: none; }
+        .img-opt-txt { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+        .img-opt-txt b { font-size: 14px; font-weight: 700; }
+        .img-opt-txt small { font-size: 11.5px; font-weight: 600; color: var(--text-gray); }
+
+        .img-opt-check {
+            width: 22px;
+            height: 22px;
+            min-width: 22px;
+            border-radius: 50%;
+            border: 1.5px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: transparent;
+            transition: all 0.25s ease;
+        }
+        .img-opt.selected .img-opt-check { background: var(--secondary-color); border-color: var(--secondary-color); color: #fff; }
+
+        .img-opts-confirm {
+            margin-top: 4px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 20px;
+            border-radius: 16px;
+            border: none;
+            background: linear-gradient(135deg, var(--header-grad-1), var(--header-grad-3));
+            color: #fff;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            font-size: 14.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.25s, box-shadow 0.25s;
+        }
+        .img-opts-confirm:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(15, 43, 72, 0.28); }
+        .img-opts-confirm:active { transform: scale(0.98); }
 
         .share-toast {
             position: fixed;
@@ -1120,10 +1366,6 @@
                     <div class="timer-box"><span class="timer-label" id="days-label">يوم</span><span class="timer-num" id="days">00</span></div>
                     <div class="timer-box"><span class="timer-label" id="hours-label">ساعة</span><span class="timer-num" id="hours">00</span></div>
                     <div class="timer-box"><span class="timer-label" id="minutes-label">دقيقة</span><span class="timer-num" id="minutes">00</span></div>
-                </div>
-                <div class="card-actions">
-                    <button class="action-btn" id="share-image-btn" type="button"><i class="fas fa-image"></i><span>مشاركة كصورة</span></button>
-                    <button class="action-btn" id="copy-link-btn" type="button"><i class="fas fa-link"></i><span>نسخ رابط الحدث</span></button>
                 </div>
             </div>
         </section>
@@ -1226,6 +1468,36 @@
 
     </div>
 
+    <div class="img-opts-overlay" id="img-opts-overlay" aria-hidden="true">
+        <div class="img-opts-sheet" role="dialog" aria-modal="true" aria-labelledby="img-opts-title">
+            <div class="img-opts-head">
+                <div>
+                    <h3 id="img-opts-title">خيارات صورة الحدث</h3>
+                    <p>اختر تفاصيل الوقت المتبقي الظاهرة في الصورة</p>
+                </div>
+                <button class="img-opts-close" id="img-opts-close" type="button" aria-label="إغلاق"><i class="fas fa-xmark"></i></button>
+            </div>
+            <div class="img-opts-body">
+                <button class="img-opt" type="button" data-mode="d">
+                    <span class="img-opt-icon"><i class="fas fa-calendar-day"></i></span>
+                    <span class="img-opt-txt"><b>الأيام فقط</b><small>12 يوم</small></span>
+                    <span class="img-opt-check"><i class="fas fa-check"></i></span>
+                </button>
+                <button class="img-opt" type="button" data-mode="dh">
+                    <span class="img-opt-icon"><i class="fas fa-clock"></i></span>
+                    <span class="img-opt-txt"><b>الأيام والساعات</b><small>12 يوم · 05 ساعة</small></span>
+                    <span class="img-opt-check"><i class="fas fa-check"></i></span>
+                </button>
+                <button class="img-opt selected" type="button" data-mode="dhm">
+                    <span class="img-opt-icon"><i class="fas fa-stopwatch"></i></span>
+                    <span class="img-opt-txt"><b>الأيام والساعات والدقائق</b><small>12 يوم · 05 ساعة · 30 دقيقة</small></span>
+                    <span class="img-opt-check"><i class="fas fa-check"></i></span>
+                </button>
+                <button class="img-opts-confirm" id="img-opts-confirm" type="button"><i class="fas fa-image"></i><span>إنشاء الصورة</span></button>
+            </div>
+        </div>
+    </div>
+
     <div class="weeks-overlay" id="weeks-overlay" aria-hidden="true">
         <div class="weeks-modal" role="dialog" aria-modal="true" aria-labelledby="weeks-modal-title">
             <div class="weeks-modal-head">
@@ -1257,12 +1529,22 @@
         let countdownInterval = null;
         let currentEventKey = null;
 
-        function makeEventKey(dateStr, title) {
+        function hashTitle(title) {
             let h = 0;
             for (let i = 0; i < title.length; i++) {
                 h = (h * 31 + title.charCodeAt(i)) >>> 0;
             }
-            return dateStr + '-' + h.toString(36);
+            return h;
+        }
+
+        function makeEventKey(dateStr, title) {
+            const ymd = parseInt(dateStr.replace(/-/g, '').slice(2), 10);
+            const tag = (hashTitle(title) % 46656).toString(36);
+            return ymd.toString(36) + ('000' + tag).slice(-3);
+        }
+
+        function legacyEventKey(dateStr, title) {
+            return dateStr + '-' + hashTitle(title).toString(36);
         }
 
         (function initTheme() {
@@ -1282,21 +1564,47 @@
             } catch (e) { console.error(e); }
         })();
 
+        function isWordOnlyUnit(value) { return value === 1 || value === 2; }
+
+        function padUnit(value) {
+            if (isWordOnlyUnit(value)) return '';
+            return value < 10 ? '0' + value : String(value);
+        }
+
+        function paintTimerUnit(numId, labelId, value, type) {
+            const numEl = document.getElementById(numId);
+            const labelEl = document.getElementById(labelId);
+            if (labelEl) labelEl.innerText = getArabicPlural(value, type);
+            if (!numEl) return;
+            const box = numEl.closest('.timer-box');
+            if (isWordOnlyUnit(value)) {
+                numEl.innerHTML = '';
+                if (box) box.classList.add('word-only');
+            } else {
+                numEl.innerHTML = value < 10 ? '0' + value : String(value);
+                if (box) box.classList.remove('word-only');
+            }
+        }
+
+        function resetTimerUnits() {
+            document.querySelectorAll('.timer-box').forEach(function(b) { b.classList.remove('word-only'); });
+        }
+
         function getArabicPlural(value, type) {
             let mod100 = value % 100;
             if (type === 'day') {
                 if (value === 1) return 'يوم';
-                if (value === 2) return 'يومان';
+                if (value === 2) return 'يومين';
                 if (mod100 >= 3 && mod100 <= 10) return 'أيام';
                 return 'يوم';
             } else if (type === 'hour') {
                 if (value === 1) return 'ساعة';
-                if (value === 2) return 'ساعتان';
+                if (value === 2) return 'ساعتين';
                 if (mod100 >= 3 && mod100 <= 10) return 'ساعات';
                 return 'ساعة';
             } else if (type === 'minute') {
                 if (value === 1) return 'دقيقة';
-                if (value === 2) return 'دقيقتان';
+                if (value === 2) return 'دقيقتين';
                 if (mod100 >= 3 && mod100 <= 10) return 'دقائق';
                 return 'دقيقة';
             }
@@ -1406,6 +1714,7 @@
 
                         if (distance <= 0) {
                             clearInterval(countdownInterval);
+                            resetTimerUnits();
                             if (daysEl) daysEl.innerHTML = "00";
                             if (hoursEl) hoursEl.innerHTML = "00";
                             if (minutesEl) minutesEl.innerHTML = "00";
@@ -1416,17 +1725,9 @@
                         const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
 
-                        if (daysEl) daysEl.innerHTML = days < 10 && days > 0 ? "0" + days : days;
-                        if (hoursEl) hoursEl.innerHTML = hours < 10 ? "0" + hours : hours;
-                        if (minutesEl) minutesEl.innerHTML = minutes < 10 ? "0" + minutes : minutes;
-
-                        const daysLabel = document.getElementById("days-label");
-                        const hoursLabel = document.getElementById("hours-label");
-                        const minutesLabel = document.getElementById("minutes-label");
-
-                        if (daysLabel) daysLabel.innerText = getArabicPlural(days, 'day');
-                        if (hoursLabel) hoursLabel.innerText = getArabicPlural(hours, 'hour');
-                        if (minutesLabel) minutesLabel.innerText = getArabicPlural(minutes, 'minute');
+                        paintTimerUnit("days", "days-label", days, 'day');
+                        paintTimerUnit("hours", "hours-label", hours, 'hour');
+                        paintTimerUnit("minutes", "minutes-label", minutes, 'minute');
                     } catch (innerErr) {
                         console.error(innerErr);
                     }
@@ -1510,6 +1811,7 @@
 
                     ["g-day","h-day"].forEach(id => { const el = document.getElementById(id); if (el) el.innerText = "--"; });
                     ["g-text","h-text"].forEach(id => { const el = document.getElementById(id); if (el) el.innerText = "----"; });
+                    resetTimerUnits();
                     ["days","hours","minutes"].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = "00"; });
 
                     const labels = { "days-label": "يوم", "hours-label": "ساعة", "minutes-label": "دقيقة" };
@@ -1563,42 +1865,83 @@
             }
         }
 
-        function downloadICS(title, startDateStr, endDateStr) {
+        function buildICS(title, start, end) {
+            const fmt = (d) => d.getFullYear() + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2);
+            const uid = 'qu-' + fmt(start) + '-' + Math.random().toString(36).slice(2, 8);
+            return [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0',
+                'PRODID:-//QassimU//AcademicCalendar//AR',
+                'CALSCALE:GREGORIAN',
+                'METHOD:PUBLISH',
+                'BEGIN:VEVENT',
+                'UID:' + uid,
+                'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z',
+                'DTSTART;VALUE=DATE:' + fmt(start),
+                'DTEND;VALUE=DATE:' + fmt(end),
+                'SUMMARY:' + title.replace(/[,;]/g, ' '),
+                'DESCRIPTION:التقويم الأكاديمي - جامعة القصيم',
+                'BEGIN:VALARM',
+                'TRIGGER:-P1D',
+                'ACTION:DISPLAY',
+                'DESCRIPTION:' + title.replace(/[,;]/g, ' '),
+                'END:VALARM',
+                'END:VEVENT',
+                'END:VCALENDAR'
+            ].join('\r\n');
+        }
+
+        function addToCalendar(title, startDateStr, endDateStr) {
             try {
-                const fmt = (d) => d.toISOString().slice(0, 10).replace(/-/g, '');
+                const fmt = (d) => d.getFullYear() + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2);
                 const start = new Date(startDateStr.replace(/-/g, '/'));
                 const end = new Date(endDateStr.replace(/-/g, '/'));
                 end.setDate(end.getDate() + 1);
 
-                const uid = 'qu-' + startDateStr + '-' + Math.random().toString(36).slice(2, 8);
-                const ics = [
-                    'BEGIN:VCALENDAR',
-                    'VERSION:2.0',
-                    'PRODID:-//QassimU//AcademicCalendar//AR',
-                    'BEGIN:VEVENT',
-                    'UID:' + uid,
-                    'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z',
-                    'DTSTART;VALUE=DATE:' + fmt(start),
-                    'DTEND;VALUE=DATE:' + fmt(end),
-                    'SUMMARY:' + title.replace(/[,;]/g, ' '),
-                    'DESCRIPTION:التقويم الأكاديمي - جامعة القصيم',
-                    'END:VEVENT',
-                    'END:VCALENDAR'
-                ].join('\r\n');
+                const ua = navigator.userAgent || '';
+                const isApple = /iPad|iPhone|iPod/.test(ua) ||
+                                (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ||
+                                (/Macintosh/.test(ua) && /Safari/.test(ua) && !/Chrome|Chromium|Edg/.test(ua));
 
-                const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'حدث-جامعة-القصيم.ics';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                setTimeout(() => URL.revokeObjectURL(url), 1000);
+                if (isApple) {
+                    const uri = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(buildICS(title, start, end));
+                    window.location.href = uri;
+                    showToast('جارٍ فتح التقويم لإضافة الحدث ✓');
+                    return;
+                }
+
+                const url = 'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+                    '&text=' + encodeURIComponent(title) +
+                    '&dates=' + fmt(start) + '/' + fmt(end) +
+                    '&details=' + encodeURIComponent('التقويم الأكاديمي - جامعة القصيم') +
+                    '&ctz=Asia/Riyadh';
+
+                const win = window.open(url, '_blank', 'noopener');
+                if (!win) { window.location.href = url; }
+                showToast('يُفتح تقويم Google لحفظ الحدث ✓');
             } catch (e) {
                 console.error(e);
+                showToast('تعذّرت إضافة الحدث');
             }
         }
+
+        function closeRowActions() {
+            document.querySelectorAll('.row-actions.open').forEach(function(el) {
+                el.classList.remove('open');
+                el.classList.remove('drop-down');
+                const t = el.querySelector('.row-toggle-btn');
+                if (t) t.setAttribute('aria-expanded', 'false');
+            });
+            document.querySelectorAll('tr.actions-open').forEach(function(r) { r.classList.remove('actions-open'); });
+        }
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.row-actions')) closeRowActions();
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeRowActions();
+        });
+        window.addEventListener('scroll', function() { closeRowActions(); }, { passive: true });
 
         function initEventsAndClicks() {
             try {
@@ -1658,43 +2001,84 @@
                             if (!row.querySelector('.row-actions')) {
                                 const actions = document.createElement('div');
                                 actions.className = 'row-actions';
+                                actions.addEventListener('click', function(e) { e.stopPropagation(); });
+
+                                const toggleBtn = document.createElement('button');
+                                toggleBtn.className = 'row-toggle-btn';
+                                toggleBtn.type = 'button';
+                                toggleBtn.title = 'خيارات الحدث';
+                                toggleBtn.setAttribute('aria-label', 'خيارات الحدث');
+                                toggleBtn.setAttribute('aria-haspopup', 'menu');
+                                toggleBtn.setAttribute('aria-expanded', 'false');
+                                toggleBtn.innerHTML = '<span class="kdot"></span><span class="kdot"></span><span class="kdot"></span>';
+                                toggleBtn.addEventListener('click', function() {
+                                    const willOpen = !actions.classList.contains('open');
+                                    closeRowActions();
+                                    if (willOpen) {
+                                        const r = toggleBtn.getBoundingClientRect();
+                                        const needed = (menu.offsetHeight || 190) + 14;
+                                        if (r.top < needed && (window.innerHeight - r.bottom) > r.top) {
+                                            actions.classList.add('drop-down');
+                                        }
+                                        actions.classList.add('open');
+                                        row.classList.add('actions-open');
+                                        toggleBtn.setAttribute('aria-expanded', 'true');
+                                    }
+                                });
+                                actions.appendChild(toggleBtn);
+
+                                const menu = document.createElement('div');
+                                menu.className = 'row-actions-menu';
+                                menu.setAttribute('role', 'menu');
+
+                                const menuTitle = document.createElement('div');
+                                menuTitle.className = 'row-menu-title';
+                                menuTitle.innerText = 'خيارات الحدث';
+                                menu.appendChild(menuTitle);
 
                                 if (today <= eventEnd) {
                                     const startAttr = row.getAttribute('data-start') || dateString;
                                     const icsBtn = document.createElement('button');
-                                    icsBtn.className = 'ics-btn';
+                                    icsBtn.className = 'row-menu-item act-cal';
+                                    icsBtn.type = 'button';
+                                    icsBtn.setAttribute('role', 'menuitem');
                                     icsBtn.title = 'أضف إلى تقويم جوالك';
                                     icsBtn.setAttribute('aria-label', 'أضف إلى التقويم');
-                                    icsBtn.innerHTML = '<i class="fas fa-calendar-plus"></i>';
-                                    icsBtn.addEventListener('click', function(e) {
-                                        e.stopPropagation();
-                                        downloadICS(eventTitle, startAttr, dateString);
+                                    icsBtn.innerHTML = '<span class="rmi-ico"><i class="fas fa-calendar-plus"></i></span><span class="rmi-label">إضافة إلى التقويم</span>';
+                                    icsBtn.addEventListener('click', function() {
+                                        closeRowActions();
+                                        addToCalendar(eventTitle, startAttr, dateString);
                                     });
-                                    actions.appendChild(icsBtn);
+                                    menu.appendChild(icsBtn);
                                 }
 
                                 const shareRowBtn = document.createElement('button');
-                                shareRowBtn.className = 'row-icon-btn';
+                                shareRowBtn.className = 'row-menu-item act-img';
+                                shareRowBtn.type = 'button';
+                                shareRowBtn.setAttribute('role', 'menuitem');
                                 shareRowBtn.title = 'مشاركة الحدث كصورة';
                                 shareRowBtn.setAttribute('aria-label', 'مشاركة الحدث كصورة');
-                                shareRowBtn.innerHTML = '<i class="fas fa-image"></i>';
-                                shareRowBtn.addEventListener('click', function(e) {
-                                    e.stopPropagation();
-                                    shareEventImage(buildRowSnapshot(row), shareRowBtn);
+                                shareRowBtn.innerHTML = '<span class="rmi-ico"><i class="fas fa-image"></i></span><span class="rmi-label">مشاركة كصورة</span>';
+                                shareRowBtn.addEventListener('click', function() {
+                                    closeRowActions();
+                                    openImageOptions(buildRowSnapshot(row), shareRowBtn);
                                 });
-                                actions.appendChild(shareRowBtn);
+                                menu.appendChild(shareRowBtn);
 
                                 const linkRowBtn = document.createElement('button');
-                                linkRowBtn.className = 'row-icon-btn';
+                                linkRowBtn.className = 'row-menu-item act-link';
+                                linkRowBtn.type = 'button';
+                                linkRowBtn.setAttribute('role', 'menuitem');
                                 linkRowBtn.title = 'نسخ رابط الحدث';
                                 linkRowBtn.setAttribute('aria-label', 'نسخ رابط الحدث');
-                                linkRowBtn.innerHTML = '<i class="fas fa-link"></i>';
-                                linkRowBtn.addEventListener('click', function(e) {
-                                    e.stopPropagation();
+                                linkRowBtn.innerHTML = '<span class="rmi-ico"><i class="fas fa-link"></i></span><span class="rmi-label">نسخ رابط الحدث</span>';
+                                linkRowBtn.addEventListener('click', function() {
+                                    closeRowActions();
                                     copyEventLink(makeEventKey(dateString, eventTitle));
                                 });
-                                actions.appendChild(linkRowBtn);
+                                menu.appendChild(linkRowBtn);
 
+                                actions.appendChild(menu);
                                 row.appendChild(actions);
                             }
 
@@ -1722,7 +2106,7 @@
                                 }
 
                                 currentEventKey = makeEventKey(dateString, eventTitle);
-                                try { history.replaceState(null, '', location.pathname + '?event=' + currentEventKey); } catch (linkErr) {}
+                                try { history.replaceState(null, '', location.pathname + '?e=' + currentEventKey); } catch (linkErr) {}
                             });
                         } catch (innerRowErr) {
                             console.error(innerRowErr);
@@ -1976,7 +2360,7 @@
         }
 
         function buildEventLink(key) {
-            return location.origin + location.pathname + '?event=' + key;
+            return location.origin + location.pathname + '?e=' + key;
         }
 
         function copyEventLink(key) {
@@ -2006,9 +2390,9 @@
         function applyEventLink() {
             try {
                 const params = new URLSearchParams(location.search);
-                let key = params.get('event');
-                if (!key && location.hash.indexOf('event=') !== -1) {
-                    key = decodeURIComponent(location.hash.split('event=')[1]);
+                let key = params.get('e') || params.get('event');
+                if (!key && location.hash.indexOf('e=') !== -1) {
+                    key = decodeURIComponent(location.hash.split('e=')[1]);
                 }
                 if (!key) return;
 
@@ -2018,7 +2402,7 @@
                     const tEl = row.querySelector('td[data-label="الحدث الأكاديمي"] .event-name span:last-child');
                     if (!d || !tEl) continue;
                     const t = (tEl.textContent || tEl.innerText).trim();
-                    if (makeEventKey(d, t) !== key) continue;
+                    if (makeEventKey(d, t) !== key && legacyEventKey(d, t) !== key) continue;
 
                     if (row.classList.contains('past-hidden')) {
                         const toggleBtn = document.getElementById('toggle-past-btn');
@@ -2076,29 +2460,6 @@
             };
         }
 
-        function buildCardSnapshot() {
-            const statusEl = document.getElementById('timer-status');
-            const isActive = (statusEl.style.color || '').indexOf('active') !== -1;
-            return {
-                title: (document.getElementById('event-title').textContent || '').trim(),
-                status: (statusEl.textContent || '').trim(),
-                statusColor: isActive ? '#f39c4a' : '#4dd8c8',
-                key: currentEventKey,
-                vals: {
-                    days: document.getElementById('days').textContent,
-                    hours: document.getElementById('hours').textContent,
-                    minutes: document.getElementById('minutes').textContent,
-                    daysLabel: document.getElementById('days-label').textContent,
-                    hoursLabel: document.getElementById('hours-label').textContent,
-                    minutesLabel: document.getElementById('minutes-label').textContent,
-                    gDay: document.getElementById('g-day').textContent,
-                    gText: document.getElementById('g-text').textContent,
-                    hDay: document.getElementById('h-day').textContent,
-                    hText: document.getElementById('h-text').textContent
-                }
-            };
-        }
-
         function buildRowSnapshot(row) {
             const dateString = row.getAttribute('data-date');
             const titleElement = row.querySelector('td[data-label="الحدث الأكاديمي"] .event-name span:last-child');
@@ -2128,7 +2489,6 @@
             const days = Math.floor(dist / 86400000);
             const hours = Math.floor((dist % 86400000) / 3600000);
             const minutes = Math.floor((dist % 3600000) / 60000);
-            const pad = n => (n < 10 ? '0' + n : String(n));
             const d = splitDates(gDate, hDate);
             return {
                 title: title,
@@ -2136,9 +2496,9 @@
                 statusColor: statusColor,
                 key: makeEventKey(dateString, title),
                 vals: {
-                    days: days < 10 && days > 0 ? '0' + days : String(days),
-                    hours: pad(hours),
-                    minutes: pad(minutes),
+                    days: padUnit(days),
+                    hours: padUnit(hours),
+                    minutes: padUnit(minutes),
                     daysLabel: getArabicPlural(days, 'day'),
                     hoursLabel: getArabicPlural(hours, 'hour'),
                     minutesLabel: getArabicPlural(minutes, 'minute'),
@@ -2147,14 +2507,15 @@
             };
         }
 
-        async function shareEventImage(snapshot, btn) {
+        async function shareEventImage(snapshot, btn, mode) {
+            if (!snapshot) { showToast('اختر حدثًا من الجدول أولًا'); return; }
             const icon = btn ? btn.querySelector('i') : null;
             const prevIcon = icon ? icon.className : '';
             try {
                 if (btn) btn.disabled = true;
                 if (icon) icon.className = 'fas fa-spinner fa-spin';
 
-                const data = snapshot || buildCardSnapshot();
+                const data = snapshot;
                 const title = data.title;
                 const status = data.status;
                 const statusColor = data.statusColor;
@@ -2224,37 +2585,83 @@
                 ctx.fillStyle = '#4dd8c8';
                 ctx.fillText(badgeText, W / 2, 181);
 
-                let titleFont = '800 56px Alexandria';
+                const modeKey = mode || 'dhm';
+                let boxes;
+                if (modeKey === 'd') {
+                    boxes = [{ num: vals.days, label: vals.daysLabel }];
+                } else if (modeKey === 'dh') {
+                    boxes = [
+                        { num: vals.hours, label: vals.hoursLabel },
+                        { num: vals.days, label: vals.daysLabel }
+                    ];
+                } else {
+                    boxes = [
+                        { num: vals.minutes, label: vals.minutesLabel },
+                        { num: vals.hours, label: vals.hoursLabel },
+                        { num: vals.days, label: vals.daysLabel }
+                    ];
+                }
+
+                let titleSize = 56;
                 let lineHeight = 84;
-                ctx.font = titleFont;
+                ctx.font = '800 ' + titleSize + 'px Alexandria';
                 let lines = wrapCanvasText(ctx, title, 880);
                 if (lines.length > 3) {
-                    titleFont = '800 46px Alexandria';
+                    titleSize = 46;
                     lineHeight = 70;
-                    ctx.font = titleFont;
+                    ctx.font = '800 ' + titleSize + 'px Alexandria';
                     lines = wrapCanvasText(ctx, title, 900);
                 }
-                ctx.fillStyle = '#ffffff';
-                let y = 300;
-                for (const line of lines) {
-                    ctx.fillText(line, W / 2, y);
-                    y += lineHeight;
-                }
-                y -= lineHeight;
 
-                y += 92;
+                const pillH = 150, boxH = 220;
+                const titleH = (lines.length - 1) * lineHeight + titleSize;
+                const areaTop = 250, areaBottom = H - 200;
+                let gapTitle = 88, gapPill = 82, statusH = 40, gapStatus = 46;
+                let totalH = titleH + gapTitle + pillH + gapPill + statusH + gapStatus + boxH;
+                if (totalH > areaBottom - areaTop) {
+                    gapTitle = 58; gapPill = 56; gapStatus = 34;
+                    totalH = titleH + gapTitle + pillH + gapPill + statusH + gapStatus + boxH;
+                }
+                const blockTop = areaTop + Math.max(0, ((areaBottom - areaTop) - totalH) / 2);
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '800 ' + titleSize + 'px Alexandria';
+                let baseline = blockTop + titleSize;
+                for (const line of lines) {
+                    ctx.fillText(line, W / 2, baseline);
+                    baseline += lineHeight;
+                }
+
+                const pillTop = blockTop + titleH + gapTitle;
+                const pillW = 380, pillGap = 40;
+                const pillStart = (W - (pillW * 2 + pillGap)) / 2;
+
+                drawRoundedRect(ctx, pillStart + pillW + pillGap, pillTop, pillW, pillH, 24);
+                ctx.fillStyle = '#b9cbe0';
+                ctx.fill();
+                ctx.fillStyle = '#000000';
+                ctx.font = '700 54px "IBM Plex Sans Arabic"';
+                ctx.fillText(vals.gDay, pillStart + pillW + pillGap + pillW / 2, pillTop + 68);
+                ctx.font = '600 28px "IBM Plex Sans Arabic"';
+                ctx.fillText(vals.gText, pillStart + pillW + pillGap + pillW / 2, pillTop + 116);
+
+                drawRoundedRect(ctx, pillStart, pillTop, pillW, pillH, 24);
+                ctx.fillStyle = '#6d829e';
+                ctx.fill();
+                ctx.fillStyle = '#000000';
+                ctx.font = '700 54px "IBM Plex Sans Arabic"';
+                ctx.fillText(vals.hDay, pillStart + pillW / 2, pillTop + 68);
+                ctx.font = '600 28px "IBM Plex Sans Arabic"';
+                ctx.fillText(vals.hText, pillStart + pillW / 2, pillTop + 116);
+
+                const statusY = pillTop + pillH + gapPill;
                 ctx.font = '600 36px "IBM Plex Sans Arabic"';
                 ctx.fillStyle = statusColor;
-                ctx.fillText(status, W / 2, y);
+                ctx.fillText(status, W / 2, statusY);
 
-                const boxTop = y + 52;
-                const boxW = 260, boxH = 220, gap = 35;
-                const startX = (W - (boxW * 3 + gap * 2)) / 2;
-                const boxes = [
-                    { num: vals.minutes, label: vals.minutesLabel },
-                    { num: vals.hours, label: vals.hoursLabel },
-                    { num: vals.days, label: vals.daysLabel }
-                ];
+                const boxTop = statusY + gapStatus;
+                const boxW = boxes.length === 1 ? 340 : 260, gap = 35;
+                const startX = (W - (boxW * boxes.length + gap * (boxes.length - 1))) / 2;
                 boxes.forEach((b, i) => {
                     const x = startX + i * (boxW + gap);
                     drawRoundedRect(ctx, x, boxTop, boxW, boxH, 26);
@@ -2264,34 +2671,26 @@
                     ctx.lineWidth = 2.5;
                     ctx.stroke();
                     ctx.fillStyle = '#ffffff';
-                    ctx.font = '700 92px "IBM Plex Sans Arabic"';
-                    ctx.fillText(b.num, x + boxW / 2, boxTop + 118);
-                    ctx.fillStyle = '#a9bccf';
-                    ctx.font = '500 32px "IBM Plex Sans Arabic"';
-                    ctx.fillText(b.label, x + boxW / 2, boxTop + 178);
+                    if (!b.num) {
+                        let wordSize = 66;
+                        ctx.font = '700 ' + wordSize + 'px "IBM Plex Sans Arabic"';
+                        while (ctx.measureText(b.label).width > boxW - 48 && wordSize > 32) {
+                            wordSize -= 2;
+                            ctx.font = '700 ' + wordSize + 'px "IBM Plex Sans Arabic"';
+                        }
+                        const m = ctx.measureText(b.label);
+                        const ink = (typeof m.actualBoundingBoxAscent === 'number' && typeof m.actualBoundingBoxDescent === 'number')
+                            ? (m.actualBoundingBoxAscent - m.actualBoundingBoxDescent) / 2
+                            : wordSize * 0.35;
+                        ctx.fillText(b.label, x + boxW / 2, boxTop + boxH / 2 + ink);
+                    } else {
+                        ctx.font = '700 92px "IBM Plex Sans Arabic"';
+                        ctx.fillText(b.num, x + boxW / 2, boxTop + 118);
+                        ctx.fillStyle = '#a9bccf';
+                        ctx.font = '500 32px "IBM Plex Sans Arabic"';
+                        ctx.fillText(b.label, x + boxW / 2, boxTop + 178);
+                    }
                 });
-
-                const pillTop = boxTop + boxH + 60;
-                const pillW = 380, pillH = 150, pillGap = 40;
-                const pillStart = (W - (pillW * 2 + pillGap)) / 2;
-
-                drawRoundedRect(ctx, pillStart + pillW + pillGap, pillTop, pillW, pillH, 24);
-                ctx.fillStyle = '#cfdcec';
-                ctx.fill();
-                ctx.fillStyle = '#12293f';
-                ctx.font = '700 54px "IBM Plex Sans Arabic"';
-                ctx.fillText(vals.gDay, pillStart + pillW + pillGap + pillW / 2, pillTop + 68);
-                ctx.font = '600 28px "IBM Plex Sans Arabic"';
-                ctx.fillText(vals.gText, pillStart + pillW + pillGap + pillW / 2, pillTop + 116);
-
-                drawRoundedRect(ctx, pillStart, pillTop, pillW, pillH, 24);
-                ctx.fillStyle = '#2fc4b4';
-                ctx.fill();
-                ctx.fillStyle = '#04241f';
-                ctx.font = '700 54px "IBM Plex Sans Arabic"';
-                ctx.fillText(vals.hDay, pillStart + pillW / 2, pillTop + 68);
-                ctx.font = '600 28px "IBM Plex Sans Arabic"';
-                ctx.fillText(vals.hText, pillStart + pillW / 2, pillTop + 116);
 
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
                 ctx.font = '500 28px "IBM Plex Sans Arabic"';
@@ -2333,12 +2732,61 @@
             }
         }
 
-        function initShareActions() {
+        let imageMode = 'dhm';
+        let pendingImage = null;
+
+        function openImageOptions(snapshot, btn) {
+            const overlay = document.getElementById('img-opts-overlay');
+            if (!overlay) { shareEventImage(snapshot, btn, imageMode); return; }
+            pendingImage = { snapshot: snapshot, btn: btn };
+            overlay.classList.add('open');
+            overlay.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeImageOptions() {
+            const overlay = document.getElementById('img-opts-overlay');
+            if (!overlay) return;
+            overlay.classList.remove('open');
+            overlay.setAttribute('aria-hidden', 'true');
+        }
+
+        function initImageOptions() {
             try {
-                const shareBtn = document.getElementById('share-image-btn');
-                const copyBtn = document.getElementById('copy-link-btn');
-                if (shareBtn) shareBtn.addEventListener('click', function() { shareEventImage(null, shareBtn); });
-                if (copyBtn) copyBtn.addEventListener('click', function() { copyEventLink(currentEventKey); });
+                const overlay = document.getElementById('img-opts-overlay');
+                if (!overlay) return;
+                const opts = overlay.querySelectorAll('.img-opt');
+                const closeBtn = document.getElementById('img-opts-close');
+                const confirmBtn = document.getElementById('img-opts-confirm');
+
+                try {
+                    const saved = localStorage.getItem('qu-image-mode');
+                    if (saved === 'd' || saved === 'dh' || saved === 'dhm') imageMode = saved;
+                } catch (e) {}
+
+                const paint = function() {
+                    opts.forEach(function(o) {
+                        o.classList.toggle('selected', o.getAttribute('data-mode') === imageMode);
+                    });
+                };
+                paint();
+
+                opts.forEach(function(o) {
+                    o.addEventListener('click', function() {
+                        imageMode = o.getAttribute('data-mode');
+                        try { localStorage.setItem('qu-image-mode', imageMode); } catch (e) {}
+                        paint();
+                    });
+                });
+
+                if (closeBtn) closeBtn.addEventListener('click', closeImageOptions);
+                overlay.addEventListener('click', function(e) { if (e.target === overlay) closeImageOptions(); });
+                document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeImageOptions(); });
+
+                if (confirmBtn) confirmBtn.addEventListener('click', function() {
+                    const req = pendingImage;
+                    closeImageOptions();
+                    if (req) shareEventImage(req.snapshot, req.btn, imageMode);
+                });
             } catch (e) { console.error(e); }
         }
 
@@ -2347,8 +2795,9 @@
         initEventsAndClicks();
         initScrollReveal();
         initWeeksModal();
-        initShareActions();
+        initImageOptions();
         applyEventLink();
+        document.addEventListener('click', closeRowActions);
     </script>
 </body>
 </html>
